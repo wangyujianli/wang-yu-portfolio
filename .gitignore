@@ -1,0 +1,7 @@
+.preview/
+tmp/
+get_jobs/
+
+.DS_Store
+Thumbs.db
+*.log
