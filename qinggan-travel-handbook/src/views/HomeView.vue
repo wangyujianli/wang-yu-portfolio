@@ -302,9 +302,9 @@ const entries = [
 }
 
 @media (min-width: 720px) {
-  .home-hero__copy { grid-column: 1 / span 6; align-self: center; }
+  .home-hero__copy { grid-column: 1 / 6; grid-row: 1; align-self: center; }
   .home-cover { grid-column: 6 / -1; grid-row: 1; min-height: 540px; }
-  .journey-counter { grid-column: 1 / span 4; margin-top: -68px; margin-left: 34px; z-index: 3; }
+  .journey-counter { grid-column: 8 / -1; grid-row: 1; align-self: end; margin: 0 22px 22px 0; z-index: 3; }
   .entry-card { grid-column: span 4; }
   .entry-card--guide { grid-column: span 7; }
   .entry-card--photo { grid-column: span 5; }
@@ -315,7 +315,7 @@ const entries = [
 
 @media (min-width: 1100px) {
   .home-hero__copy { grid-column: 1 / span 5; }
-  .home-cover { grid-column: 5 / span 7; }
+  .home-cover { grid-column: 6 / span 6; }
   .journey-counter { grid-column: 10 / -1; align-self: end; margin: 0 0 44px -50px; }
 }
 </style>

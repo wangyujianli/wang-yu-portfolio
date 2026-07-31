@@ -22,13 +22,13 @@ const navItems = [
     </RouterLink>
 
     <nav class="top-nav" aria-label="主要导航">
-      <RouterLink v-for="item in navItems" :key="item.to" :to="item.to">
+      <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" :aria-label="item.label">
         <component :is="item.icon" :size="18" :stroke-width="1.8" />
         <span>{{ item.label }}</span>
       </RouterLink>
     </nav>
 
-    <RouterLink class="replay-link" to="/intro?replay=1">
+    <RouterLink class="replay-link" to="/intro?replay=1" aria-label="重播序章">
       <RotateCcw :size="18" />
       <span>重播序章</span>
     </RouterLink>
@@ -105,6 +105,7 @@ const navItems = [
   color: var(--muted);
   font-size: 0.82rem;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .top-nav a.router-link-exact-active {
@@ -126,14 +127,21 @@ const navItems = [
     display: flex;
   }
 
-  .replay-link span {
-    display: inline;
-  }
+  .top-nav a span,
+  .app-brand small { display: none; }
+  .top-nav a { padding-inline: 10px; }
+}
+
+@media (min-width: 980px) {
+  .top-nav a span,
+  .app-brand small { display: block; }
 }
 
 @media (min-width: 1100px) {
   .app-header {
     padding-inline: max(32px, calc((100vw - 1320px) / 2));
   }
+
+  .replay-link span { display: inline; }
 }
 </style>

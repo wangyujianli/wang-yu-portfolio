@@ -14,7 +14,7 @@ const hasKey = Boolean(import.meta.env.VITE_AMAP_KEY?.trim())
 const mode = ref<'live' | 'atlas'>(hasKey ? 'live' : 'atlas')
 const mapVersion = ref(0)
 const mapNotice = ref(hasKey ? '' : '真实地图暂未连接，已打开完整路线图文版。')
-const selectedId = ref<string | null>('xining')
+const selectedId = ref<string | null>(null)
 const selectedPlace = computed(() => selectedId.value ? placeById.get(selectedId.value) : undefined)
 
 function handleFailure(reason: string): void {

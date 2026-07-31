@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { MapPinned } from '@lucide/vue'
 import VisitedToggle from '@/components/common/VisitedToggle.vue'
 import { routeCombinations } from '@/data/combinations'
@@ -20,6 +20,24 @@ function position(coordinates: readonly [number, number]): { left: string; top: 
   const left = 8 + ((longitude - 93) / 9.5) * 84
   const top = 92 - ((latitude - 36) / 5.1) * 80
   return { left: `${left}%`, top: `${top}%` }
+}
+
+const markerOffsets: Record<string, readonly [number, number]> = {
+  xining: [-15, -10],
+  'taer-temple': [14, 12],
+  'guazhou-earth-son': [-14, 12],
+  'guazhou-boundless': [14, -12],
+  mogao: [-14, -11],
+  'mingsha-moon-spring': [15, 12],
+}
+
+function markerPosition(placeId: string, coordinates: readonly [number, number]): { left: string; top: string } {
+  const base = position(coordinates)
+  const [offsetX = 0, offsetY = 0] = markerOffsets[placeId] ?? []
+  return {
+    left: `calc(${base.left} + ${offsetX}px)`,
+    top: `calc(${base.top} + ${offsetY}px)`,
+  }
 }
 
 function drawRoute(): void {
@@ -47,8 +65,6 @@ function drawRoute(): void {
   context.stroke()
 }
 
-watch(() => props.visitedIds, () => undefined, { deep: true })
-
 onMounted(async () => {
   await nextTick()
   drawRoute()
@@ -70,7 +86,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
         type="button"
         class="atlas-marker"
         :class="{ 'is-visited': visitedSet.has(place.id), 'is-highlight': place.category === '沿途彩蛋' }"
-        :style="position(place.coordinates)"
+        :style="markerPosition(place.id, place.coordinates)"
         :aria-label="`查看${place.name}`"
         @click="emit('select', place.id)"
       >
@@ -133,7 +149,7 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
   transform: translate(-50%, -50%);
   cursor: pointer;
 }
-.atlas-marker span { position: absolute; top: 35px; left: 50%; width: max-content; max-width: 100px; color: var(--ink); font-size: 0.64rem; font-weight: 700; transform: translateX(-50%); }
+.atlas-marker span { display: none; position: absolute; top: 35px; left: 50%; width: max-content; max-width: 100px; color: var(--ink); font-size: 0.64rem; font-weight: 700; transform: translateX(-50%); }
 .atlas-marker.is-visited { background: var(--lake); }
 .atlas-marker.is-highlight { border-radius: 9px; background: var(--sunset); }
 .atlas-map__legend { position: absolute; z-index: 4; right: 14px; bottom: 14px; display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 999px; color: var(--muted); background: rgb(247 240 229 / 86%); font-size: 0.7rem; }
@@ -161,5 +177,23 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
   .atlas-route-list article :deep(.visited-toggle) { grid-column: auto; }
   .atlas-combinations { grid-column: 1 / -1; }
   .atlas-combinations > div { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 1100px) {
+  .atlas-marker span {
+    display: block;
+    padding: 4px 7px;
+    border-radius: 8px;
+    background: rgb(247 240 229 / 94%);
+    box-shadow: 0 4px 12px rgb(53 42 36 / 12%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+  .atlas-marker:hover span,
+  .atlas-marker:focus-visible span {
+    opacity: 1;
+    transform: translate(-50%, 3px);
+  }
 }
 </style>
