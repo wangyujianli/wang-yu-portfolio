@@ -6,8 +6,6 @@ export function shouldOpenIntro(hasSeenIntro: boolean, targetName: string | symb
   return !hasSeenIntro && targetName !== 'intro'
 }
 
-const placeholder = () => import('@/views/ComingSoonView.vue')
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior: () => ({ top: 0 }),
@@ -17,10 +15,10 @@ const router = createRouter({
     { path: '/map', name: 'map', component: () => import('@/views/MapView.vue') },
     { path: '/places', name: 'places', component: () => import('@/views/PlacesView.vue') },
     { path: '/places/:slug', name: 'place-detail', component: () => import('@/views/PlaceDetailView.vue') },
-    { path: '/photo-guide', name: 'photo-guide', component: placeholder },
-    { path: '/highlights', name: 'highlights', component: placeholder },
-    { path: '/footprints', name: 'footprints', component: placeholder },
-    { path: '/preparation', name: 'preparation', component: placeholder },
+    { path: '/photo-guide', name: 'photo-guide', component: () => import('@/views/PhotoGuideView.vue') },
+    { path: '/highlights', name: 'highlights', component: () => import('@/views/HighlightsView.vue') },
+    { path: '/footprints', name: 'footprints', component: () => import('@/views/FootprintsView.vue') },
+    { path: '/preparation', name: 'preparation', component: () => import('@/views/PreparationView.vue') },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/views/NotFoundView.vue') },
   ],
 })
