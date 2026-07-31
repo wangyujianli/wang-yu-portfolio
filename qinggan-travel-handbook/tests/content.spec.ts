@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { routeCombinations } from '@/data/combinations'
 import { highlights } from '@/data/highlights'
-import { photoGuides } from '@/data/photoGuides'
+import { photoGuides, photoPlaceExamples } from '@/data/photoGuides'
 import { places } from '@/data/places'
 import { routeStops } from '@/data/route'
 
@@ -38,6 +38,7 @@ describe('travel handbook content', () => {
   it('contains the approved highlights and eight photo scenes', () => {
     expect(highlights).toHaveLength(7)
     expect(photoGuides).toHaveLength(8)
+    expect(photoPlaceExamples).toHaveLength(12)
     expect(photoGuides.every((guide) => guide.soloPoses.length === 3)).toBe(true)
   })
 

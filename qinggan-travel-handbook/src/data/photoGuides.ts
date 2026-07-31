@@ -76,3 +76,18 @@ export const photoGuides: PhotoSceneGuide[] = [
 ]
 
 export const photoMinimumFormula = ['10秒稳定全景', '10秒人物行走', '一张六人完整合影'] as const
+
+export const photoPlaceExamples = [
+  { name: '塔尔寺', image: '/images/photo-guide/place-taer.png', note: '回眸、慢走与门侧站位', colors: '米白 · 海军蓝 · 砖红' },
+  { name: '莫高窟', image: '/images/photo-guide/place-mogao.png', note: '人物朝向与建筑留白；可拍摄室内区域关闭闪光灯', colors: '米白 · 深蓝 · 砖红' },
+  { name: '嘉峪关', image: '/images/photo-guide/place-jiayuguan.png', note: '门洞框景、远眺与台阶层次', colors: '驼色 · 深蓝 · 砖红' },
+  { name: '门源油菜花', image: '/images/photo-guide/place-menyuan.png', note: '花田小路与雪峰背景', colors: '米白 · 牛仔蓝 · 酒红' },
+  { name: '张掖七彩丹霞', image: '/images/photo-guide/place-zhangye.png', note: '小人物、大场景与山体色带', colors: '奶油白 · 雾蓝 · 湖水青' },
+  { name: '瓜州大地之子', image: '/images/photo-guide/place-son-of-earth.png', note: '借位互动与戈壁尺度', colors: '米白 · 牛仔蓝 · 橙色' },
+  { name: 'G315 公路', image: '/images/photo-guide/place-g315.png', note: '公路纵深、背影与侧光', colors: '牛仔蓝 · 米白 · 橙色' },
+  { name: '水上雅丹', image: '/images/photo-guide/place-water-yadan.png', note: '临水侧站与迎风动作', colors: '米白 · 宝蓝 · 酒红' },
+  { name: '大柴旦翡翠湖', image: '/images/photo-guide/place-emerald-lake.png', note: '栈道层次与慢走回头', colors: '米白 · 深蓝 · 酒红' },
+  { name: '茶卡盐湖', image: '/images/photo-guide/place-chaka.png', note: '镜面站姿与倒影走拍', colors: '米白 · 宝蓝 · 酒红' },
+  { name: '青海湖', image: '/images/photo-guide/place-qinghai-lake.png', note: '湖边走拍与围巾借风', colors: '米白 · 宝蓝 · 酒红' },
+  { name: '鸣沙山月牙泉', image: '/images/photo-guide/place-mingsha.png', note: '沙脊剪影、坐姿与多人行走', colors: '深棕 · 米白 · 日落橙' },
+] as const
