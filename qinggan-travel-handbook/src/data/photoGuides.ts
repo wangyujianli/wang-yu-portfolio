@@ -1,0 +1,93 @@
+import type { PhotoSceneGuide } from '@/types/content'
+
+export const photoGuides: PhotoSceneGuide[] = [
+  {
+    id: 'lake', name: '湖泊和盐湖', kicker: '让倒影成为第二层人物',
+    vantage: '机位略低于腰线，人物与倒影各占一半；有栈道时用栏杆或木纹带出纵深。', lens: '1× 环境人像；2× 压缩远处湖岸。',
+    soloPoses: ['侧身慢走，目光落向远处湖岸', '围巾或外套借风形成轻微动势', '正面站定，双手自然交叠，留出完整倒影'],
+    groupComposition: '六人分成 2-2-2 三个小组，前后错开半步，让每个人和倒影都有清楚轮廓。',
+    commonMistakes: ['画面天地各半但人物恰好压在地平线上', '衣服颜色过浅，与盐面融在一起'],
+    outfit: { mainColors: ['米白', '宝蓝'], accentColor: '酒红', note: '两三人用围巾或帽子点色，倒影更完整。' },
+    overviewImage: '/images/photo-guide/overview-lake.png',
+  },
+  {
+    id: 'desert', name: '沙漠', kicker: '用沙脊画出人物轮廓',
+    vantage: '让沙脊斜穿画面，人物站在亮暗交界；逆光时先对天空测光。', lens: '1× 展示尺度；3× 拍沙丘纹理与剪影。',
+    soloPoses: ['沿沙脊缓慢前行，脚步错开', '背对镜头回头，手自然扶帽檐', '侧坐沙坡，把腿部线条朝向画面留白'],
+    groupComposition: '六人沿沙脊形成疏密变化，不排整齐一条线；站、走、回望三个动作同时存在。',
+    commonMistakes: ['正午顶光让沙丘失去纹理', '所有人挤在画面中心，没有沙漠尺度感'],
+    outfit: { mainColors: ['深棕', '米白'], accentColor: '日落橙', note: '深浅交替安排，剪影轮廓会更清晰。' },
+    overviewImage: '/images/photo-guide/overview-desert.png',
+  },
+  {
+    id: 'grassland', name: '草原和雪山', kicker: '雪峰是背景，不是头顶装饰',
+    vantage: '人物放在画面下三分之一，避开雪峰正压头顶；利用公路、河道或花带引向远山。', lens: '1× 看环境；2× 让雪峰显得更接近。',
+    soloPoses: ['背手看向雪峰', '侧身整理衣领，身体与山脊同向', '边走边回头，步幅自然'],
+    groupComposition: '六人分成 2-2-2 松散站位，最高的山峰留在队伍一侧，不与人头重叠。',
+    commonMistakes: ['广角贴得太近导致人物变形', '六个人颜色完全相同，像团体制服'],
+    outfit: { mainColors: ['米白', '牛仔蓝'], accentColor: '酒红', note: '黄色花海中用蓝白稳定画面，酒红只做小面积呼应。' },
+    overviewImage: '/images/photo-guide/overview-landform.png',
+  },
+  {
+    id: 'danxia', name: '丹霞地貌', kicker: '把人放小，山体才有分量',
+    vantage: '寻找观景台栏杆、山脊曲线或阴影边界，人物只占画面约十分之一。', lens: '2×–3× 压缩彩色山层；0.6× 只用于完整环境。',
+    soloPoses: ['扶栏远眺，身体朝向山体走势', '侧身站定，以衣摆形成垂直线', '从观景步道慢慢走入画面'],
+    groupComposition: '六人分两组置于画面两侧，中间留给色带最丰富的山体。',
+    commonMistakes: ['饱和度过高让地貌失真', '人物过大遮住山体纹理'],
+    outfit: { mainColors: ['奶油白', '雾蓝'], accentColor: '湖水青', note: '冷色服装与暖色山体形成干净对比。' },
+    overviewImage: '/images/photo-guide/overview-landform.png',
+  },
+  {
+    id: 'architecture', name: '古建筑和寺院', kicker: '用门、廊与轴线组织人物',
+    vantage: '从门洞或柱列后退一步，用建筑框住人物；画面保持横平竖直。', lens: '1× 记录完整建筑；2× 拍门窗、壁面与人物关系。',
+    soloPoses: ['沿廊慢走，目光看向前方', '在门侧自然站立，给建筑主体留空间', '轻轻回眸，双手自然收在身前'],
+    groupComposition: '六人利用门洞和台阶形成前后两层，保持中轴线清楚，同时不堵住通行。',
+    commonMistakes: ['仰拍过度导致建筑倾斜', '所有人贴着墙站成一排'],
+    outfit: { mainColors: ['米白', '海军蓝'], accentColor: '砖红', note: '沉静色系衬托彩绘与土色建筑。' },
+    overviewImage: '/images/photo-guide/overview-culture.png',
+  },
+  {
+    id: 'road', name: '公路和车辆', kicker: '车辆是同行关系的一部分',
+    vantage: '用道路曲线或车身边缘引向远方，人物与车分成前后层次。动作与机位以现场条件为准。', lens: '2×–3× 强化公路起伏；1× 拍六人与商务车。',
+    soloPoses: ['站在车侧看向远方', '打开侧门形成画框，人物从车内探出半身', '沿车辆侧面缓慢走过，抓自然步态'],
+    groupComposition: '三人在车旁、两人在侧门、一人在稍远处回望，形成不对称但平衡的同行画面。',
+    commonMistakes: ['人物与车贴在同一平面', '只拍公路不留周围荒原，失去地域尺度'],
+    outfit: { mainColors: ['牛仔蓝', '米白'], accentColor: '橙色', note: '和车身颜色错开，队伍会更醒目。' },
+    overviewImage: '/images/photo-guide/overview-landform.png',
+  },
+  {
+    id: 'ruins', name: '城墙和遗址', kicker: '让时间感留在砖石里',
+    vantage: '利用门洞、城墙斜线和台阶做前景，侧光能把砖石纹理照得更立体。', lens: '1× 保留建筑关系；2× 压缩门洞层次。',
+    soloPoses: ['门洞一侧站定，目光越过镜头', '手扶衣襟缓步下台阶', '背对镜头看城墙延伸'],
+    groupComposition: '两人在前、四人在后，借台阶自然形成高低层次，彼此留出半个身位。',
+    commonMistakes: ['人物正好挡住门洞中心', '广角边缘人物被拉宽'],
+    outfit: { mainColors: ['驼色', '深蓝'], accentColor: '砖红', note: '同色系靠深浅区分，不与土色墙面完全融为一体。' },
+    overviewImage: '/images/photo-guide/overview-culture.png',
+  },
+  {
+    id: 'sunset', name: '日落和剪影', kicker: '先分开轮廓，再等待动作',
+    vantage: '机位放低，以明亮天空为背景；人物之间留缝，曝光以天空不过曝为准。', lens: '1× 记录完整天际线；2× 拍人物动作轮廓。',
+    soloPoses: ['侧身站立，脸部轮廓朝向亮处', '缓慢抬手整理帽檐', '坐在高低错落的位置看向落日'],
+    groupComposition: '六人采用站、坐、回望三种高度，轮廓彼此分开，让每个人都能被辨认。',
+    commonMistakes: ['人物重叠成一整块黑影', '天空留得太少，失去日落色层'],
+    outfit: { mainColors: ['深蓝', '深棕'], accentColor: '暗红', note: '色彩不必鲜艳，重点是外轮廓与动作。' },
+    overviewImage: '/images/photo-guide/overview-desert.png',
+  },
+]
+
+export const photoMinimumFormula = ['10秒稳定全景', '10秒人物行走', '一张六人完整合影'] as const
+
+export const photoPlaceExamples = [
+  { name: '塔尔寺', image: '/images/photo-guide/place-taer.png', note: '回眸、慢走与门侧站位', colors: '米白 · 海军蓝 · 砖红' },
+  { name: '莫高窟', image: '/images/photo-guide/place-mogao.png', note: '人物朝向与建筑留白；可拍摄室内区域关闭闪光灯', colors: '米白 · 深蓝 · 砖红' },
+  { name: '嘉峪关', image: '/images/photo-guide/place-jiayuguan.png', note: '门洞框景、远眺与台阶层次', colors: '驼色 · 深蓝 · 砖红' },
+  { name: '门源油菜花', image: '/images/photo-guide/place-menyuan.png', note: '花田小路与雪峰背景', colors: '米白 · 牛仔蓝 · 酒红' },
+  { name: '张掖七彩丹霞', image: '/images/photo-guide/place-zhangye.png', note: '小人物、大场景与山体色带', colors: '奶油白 · 雾蓝 · 湖水青' },
+  { name: '瓜州大地之子', image: '/images/photo-guide/place-son-of-earth.png', note: '借位互动与戈壁尺度', colors: '米白 · 牛仔蓝 · 橙色' },
+  { name: 'G315 公路', image: '/images/photo-guide/place-g315.png', note: '公路纵深、背影与侧光', colors: '牛仔蓝 · 米白 · 橙色' },
+  { name: '水上雅丹', image: '/images/photo-guide/place-water-yadan.png', note: '临水侧站与迎风动作', colors: '米白 · 宝蓝 · 酒红' },
+  { name: '大柴旦翡翠湖', image: '/images/photo-guide/place-emerald-lake.png', note: '栈道层次与慢走回头', colors: '米白 · 深蓝 · 酒红' },
+  { name: '茶卡盐湖', image: '/images/photo-guide/place-chaka.png', note: '镜面站姿与倒影走拍', colors: '米白 · 宝蓝 · 酒红' },
+  { name: '青海湖', image: '/images/photo-guide/place-qinghai-lake.png', note: '湖边走拍与围巾借风', colors: '米白 · 宝蓝 · 酒红' },
+  { name: '鸣沙山月牙泉', image: '/images/photo-guide/place-mingsha.png', note: '沙脊剪影、坐姿与多人行走', colors: '深棕 · 米白 · 日落橙' },
+] as const
