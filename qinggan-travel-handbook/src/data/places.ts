@@ -304,3 +304,10 @@ export const placeCategories = [
   '公路风景',
   '沿途彩蛋',
 ] as const
+
+export function filterPlaces(source: Place[], category: string | null | undefined): Place[] {
+  if (!category || category === 'all' || !placeCategories.includes(category as (typeof placeCategories)[number])) {
+    return source
+  }
+  return source.filter((item) => item.category === category)
+}

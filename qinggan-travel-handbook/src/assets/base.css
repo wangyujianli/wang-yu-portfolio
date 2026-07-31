@@ -37,6 +37,73 @@ body {
     var(--sand-100);
 }
 
+#app,
+.app-frame {
+  min-height: 100vh;
+}
+
+::selection {
+  color: #fff;
+  background: var(--lake);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.magazine-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.paper-card {
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgb(251 247 239 / 84%);
+  box-shadow: var(--shadow);
+}
+
+.route-rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, var(--sunset), var(--line), transparent);
+}
+
+.button-primary,
+.button-secondary {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  color: #fff;
+  background: var(--sunset);
+  box-shadow: 0 12px 28px rgb(217 109 59 / 26%);
+}
+
+.button-secondary {
+  border-color: var(--line);
+  color: var(--ink);
+  background: rgb(255 255 255 / 50%);
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;
@@ -99,6 +166,11 @@ h3 {
   .page-shell {
     width: min(100% - 64px, 1320px);
     padding-top: 48px;
+  }
+
+  .magazine-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 28px;
   }
 }
 
