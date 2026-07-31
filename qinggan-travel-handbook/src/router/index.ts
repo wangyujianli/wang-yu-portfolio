@@ -14,7 +14,7 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'home', component: HomeView },
     { path: '/intro', name: 'intro', component: () => import('@/views/IntroView.vue') },
-    { path: '/map', name: 'map', component: placeholder },
+    { path: '/map', name: 'map', component: () => import('@/views/MapView.vue') },
     { path: '/places', name: 'places', component: () => import('@/views/PlacesView.vue') },
     { path: '/places/:slug', name: 'place-detail', component: () => import('@/views/PlaceDetailView.vue') },
     { path: '/photo-guide', name: 'photo-guide', component: placeholder },
