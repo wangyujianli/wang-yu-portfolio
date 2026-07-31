@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router'
 import PlaceFacts from '@/components/place/PlaceFacts.vue'
 import PlaceSections from '@/components/place/PlaceSections.vue'
 import VisitedToggle from '@/components/common/VisitedToggle.vue'
+import WeatherPanel from '@/components/weather/WeatherPanel.vue'
 import { placeBySlug } from '@/data/places'
 
 const route = useRoute()
@@ -25,6 +26,8 @@ const place = computed(() => placeBySlug.get(String(route.params.slug)))
         <VisitedToggle :place-id="place.id" />
       </div>
     </section>
+
+    <WeatherPanel class="place-weather" :place-id="place.id" :coordinates="place.weatherCoordinates" />
 
     <section class="place-layout">
       <PlaceFacts :place="place" />
@@ -135,6 +138,10 @@ const place = computed(() => placeBySlug.get(String(route.params.slug)))
   display: grid;
   gap: 28px;
   margin-top: 36px;
+}
+
+.place-weather {
+  margin-top: 28px;
 }
 
 .place-detail__footer {
