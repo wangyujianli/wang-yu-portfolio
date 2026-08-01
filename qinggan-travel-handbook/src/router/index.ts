@@ -1,9 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import { readJson } from '@/services/storage'
 
 export function shouldOpenIntro(hasSeenIntro: boolean, targetName: string | symbol | null | undefined): boolean {
-  return !hasSeenIntro && targetName !== 'intro' && targetName !== 'amap-minimal-test'
+  void hasSeenIntro
+  void targetName
+  return false
 }
 
 const router = createRouter({
@@ -11,7 +12,6 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
   routes: [
     { path: '/', name: 'home', component: HomeView },
-    { path: '/intro', name: 'intro', component: () => import('@/views/IntroView.vue') },
     { path: '/amap-minimal-test', name: 'amap-minimal-test', component: () => import('@/views/AmapMinimalTestView.vue') },
     { path: '/map', name: 'map', component: () => import('@/views/MapView.vue') },
     { path: '/places', name: 'places', component: () => import('@/views/PlacesView.vue') },
@@ -24,14 +24,6 @@ const router = createRouter({
     { path: '/preparation', name: 'preparation', component: () => import('@/views/PreparationView.vue') },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/views/NotFoundView.vue') },
   ],
-})
-
-router.beforeEach((to) => {
-  const hasSeenIntro = readJson<boolean>('westward:v1:intro-seen', false) === true
-  if (shouldOpenIntro(hasSeenIntro, to.name)) {
-    return { name: 'intro', query: { to: to.fullPath } }
-  }
-  return true
 })
 
 export default router

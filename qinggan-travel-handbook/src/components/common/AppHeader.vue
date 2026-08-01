@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { CalendarRange, Camera, Compass, Footprints, House, ListChecks, Map, Milestone, RotateCcw } from '@lucide/vue'
+import { CalendarRange, Camera, Compass, Footprints, House, ListChecks, Map, Milestone } from '@lucide/vue'
 
 const navItems = [
   { to: '/', label: '首页', icon: House },
@@ -41,10 +41,6 @@ const journeyItems = [
       </RouterLink>
     </nav>
 
-    <RouterLink class="replay-link" to="/intro?replay=1" aria-label="重播序章">
-      <RotateCcw :size="18" />
-      <span>重播序章</span>
-    </RouterLink>
   </header>
 </template>
 
@@ -111,8 +107,7 @@ const journeyItems = [
 .journey-nav a { display: inline-flex; min-height: 44px; align-items: center; gap: 6px; padding: 0 10px; border-radius: 999px; color: var(--muted); font-size: .76rem; text-decoration: none; white-space: nowrap; }
 .journey-nav a.router-link-exact-active { color: var(--ink); background: rgb(255 255 255 / 58%); }
 
-.top-nav a,
-.replay-link {
+.top-nav a {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
@@ -129,14 +124,6 @@ const journeyItems = [
   color: var(--ink);
   background: rgb(255 255 255 / 58%);
   box-shadow: inset 0 0 0 1px var(--line);
-}
-
-.replay-link {
-  color: var(--lake);
-}
-
-.replay-link span {
-  display: none;
 }
 
 @media (min-width: 720px) {
@@ -159,7 +146,6 @@ const journeyItems = [
     padding-inline: max(32px, calc((100vw - 1320px) / 2));
   }
 
-  .replay-link span { display: inline; }
   .journey-nav { display: flex; }
 }
 </style>
