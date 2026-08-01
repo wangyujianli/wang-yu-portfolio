@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { places } from '@/data/places'
-import { routeStops } from '@/data/route'
-import { loadAMap, type AMapInstance } from '@/services/amap'
+import { loadAMap, type AMapInstance } from '@/lib/amap'
+import type { JourneyRoute, Place } from '@/types/content'
 
-const props = defineProps<{ visitedIds: string[] }>()
+const props = defineProps<{ visitedIds: string[]; route: JourneyRoute; places: Place[]; selectedId?: string | null }>()
 const emit = defineEmits<{ ready: []; failed: [reason: string]; select: [placeId: string] }>()
 const container = ref<HTMLElement>()
 const markerElements = new Map<string, HTMLElement>()
@@ -18,10 +17,7 @@ function syncMarkerState(): void {
 onMounted(async () => {
   if (!container.value) return
   try {
-    const AMap = await loadAMap({
-      key: import.meta.env.VITE_AMAP_KEY ?? '',
-      securityCode: import.meta.env.VITE_AMAP_SECURITY_CODE,
-    })
+    const AMap = await loadAMap()
     if (!AMap.Polyline || !AMap.Marker || !AMap.Pixel) throw new Error('地图绘图组件没有完整加载')
 
     map = new AMap.Map(container.value, {
@@ -40,9 +36,11 @@ onMounted(async () => {
       strokeStyle: 'dashed',
       strokeOpacity: 0.8,
     })
+    const routePlaceById = new Map(props.places.map((place) => [place.id, place]))
+    const allPlaceById = new Map((await import('@/data/places')).places.map((place) => [place.id, place]))
     const routeLine = new AMap.Polyline({
-      path: routeStops.filter((stop) => stop.kind === 'route').map((stop) => [...stop.coordinates]),
-      strokeColor: '#d96d3b',
+      path: props.route.placeIds.map((id) => allPlaceById.get(id)).filter((place): place is Place => Boolean(place)).map((place) => [...place.coordinates]),
+      strokeColor: props.route.accent,
       strokeWeight: 5,
       strokeOpacity: 0.88,
       lineJoin: 'round',
@@ -51,11 +49,13 @@ onMounted(async () => {
     })
     overlays.push(flight, routeLine)
 
-    for (const place of places) {
+    for (const [index, placeId] of props.route.placeIds.filter((id, index, ids) => ids.indexOf(id) === index).entries()) {
+      const place = routePlaceById.get(placeId)
+      if (!place) continue
       const element = document.createElement('button')
       element.type = 'button'
-      element.className = `amap-route-marker${place.category === '沿途彩蛋' ? ' is-highlight' : ''}`
-      element.textContent = String(place.routeOrder)
+      element.className = `amap-route-marker${place.category === '沿途彩蛋' ? ' is-highlight' : ''}${props.selectedId === place.id ? ' is-selected' : ''}`
+      element.textContent = String(index + 1)
       element.title = place.name
       markerElements.set(place.id, element)
       const marker = new AMap.Marker({
@@ -110,6 +110,7 @@ onBeforeUnmount(() => map?.destroy())
 
 .amap-route-marker.is-visited { background: #2d7f7b; }
 .amap-route-marker.is-highlight { border-radius: 10px; background: #d96d3b; transform: rotate(4deg); }
+.amap-route-marker.is-selected { outline: 4px solid rgb(45 127 123 / 30%); transform: scale(1.14); }
 
 @media (max-width: 719px) {
   .route-map { min-height: 480px; }

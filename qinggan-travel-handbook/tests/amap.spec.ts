@@ -1,5 +1,12 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { loadAMap, resetAMapLoader } from '@/services/amap'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { loadAMap, resetAMapLoader } from '@/lib/amap'
+
+const amapLoaderMock = vi.hoisted(() => ({
+  load: vi.fn(),
+  reset: vi.fn(),
+}))
+
+vi.mock('@amap/amap-jsapi-loader', () => amapLoaderMock)
 
 class FakeMap {
   add(): void {}
@@ -10,42 +17,53 @@ class FakeMap {
 describe('AMap loader', () => {
   beforeEach(() => {
     resetAMapLoader()
-    document.querySelector('#amap-js-api')?.remove()
+    vi.unstubAllEnvs()
+    amapLoaderMock.load.mockReset()
+    amapLoaderMock.reset.mockReset()
     delete window.AMap
     delete window._AMapSecurityConfig
   })
 
-  it('rejects immediately when the key is missing', async () => {
-    await expect(loadAMap({ key: '' })).rejects.toThrow('未配置高德地图 Key')
-    expect(document.querySelector('#amap-js-api')).toBeNull()
+  it('rejects immediately when local AMap config is incomplete', async () => {
+    vi.stubEnv('VITE_AMAP_JS_KEY', '')
+    vi.stubEnv('VITE_AMAP_SECURITY_CODE', '')
+
+    await expect(loadAMap()).rejects.toThrow('高德地图配置不完整')
+    expect(amapLoaderMock.load).not.toHaveBeenCalled()
   })
 
-  it('returns an existing AMap namespace without adding a script', async () => {
+  it('returns an existing AMap namespace without calling the loader', async () => {
     const namespace = { Map: FakeMap }
     window.AMap = namespace
 
-    await expect(loadAMap({ key: 'demo' })).resolves.toBe(namespace)
-    expect(document.querySelector('#amap-js-api')).toBeNull()
+    await expect(loadAMap()).resolves.toBe(namespace)
+    expect(amapLoaderMock.load).not.toHaveBeenCalled()
   })
 
-  it('sets the security code and resolves after the script loads', async () => {
-    const loading = loadAMap({ key: 'demo', securityCode: 'secure', timeoutMs: 1_000 })
-    const script = document.querySelector<HTMLScriptElement>('#amap-js-api')
-    expect(script?.src).toContain('key=demo')
-    expect(window._AMapSecurityConfig?.securityJsCode).toBe('secure')
-
+  it('sets the security code before loading the JS API', async () => {
+    vi.stubEnv('VITE_AMAP_JS_KEY', 'test-js-key')
+    vi.stubEnv('VITE_AMAP_SECURITY_CODE', 'test-security-code')
     const namespace = { Map: FakeMap }
-    window.AMap = namespace
-    script?.dispatchEvent(new Event('load'))
+    amapLoaderMock.load.mockImplementation(() => {
+      expect(window._AMapSecurityConfig?.securityJsCode).toBe('test-security-code')
+      return Promise.resolve(namespace)
+    })
 
-    await expect(loading).resolves.toBe(namespace)
+    await expect(loadAMap()).resolves.toBe(namespace)
+    expect(amapLoaderMock.load).toHaveBeenCalledWith({
+      key: 'test-js-key',
+      version: '2.0',
+    })
   })
 
-  it('rejects and can be retried after a script error', async () => {
-    const loading = loadAMap({ key: 'demo', timeoutMs: 1_000 })
-    document.querySelector<HTMLScriptElement>('#amap-js-api')?.dispatchEvent(new Event('error'))
+  it('normalizes loader failures and can be retried', async () => {
+    vi.stubEnv('VITE_AMAP_JS_KEY', 'test-js-key')
+    vi.stubEnv('VITE_AMAP_SECURITY_CODE', 'test-security-code')
+    amapLoaderMock.load.mockRejectedValueOnce(new Error('network failed'))
+    amapLoaderMock.load.mockResolvedValueOnce({ Map: FakeMap })
 
-    await expect(loading).rejects.toThrow('高德地图脚本加载失败')
-    expect(document.querySelector('#amap-js-api')).toBeNull()
+    await expect(loadAMap()).rejects.toThrow('高德地图加载失败')
+    await expect(loadAMap()).resolves.toEqual({ Map: FakeMap })
+    expect(amapLoaderMock.load).toHaveBeenCalledTimes(2)
   })
 })
