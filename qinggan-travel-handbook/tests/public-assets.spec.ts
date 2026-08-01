@@ -7,8 +7,8 @@ describe('public asset URLs', () => {
       .toBe('/qinggan-travel-handbook/assets/scenic/xining.webp')
     expect(publicAssetUrl('/images/photo-guide/cover.png', '/qinggan-travel-handbook/'))
       .toBe('/qinggan-travel-handbook/images/photo-guide/cover.png')
-    expect(publicAssetUrl('/maps/china-outline.geojson', '/qinggan-travel-handbook/'))
-      .toBe('/qinggan-travel-handbook/maps/china-outline.geojson')
+    expect(publicAssetUrl('/assets/intro/riyueshan-prayer-flags.webp', '/qinggan-travel-handbook/'))
+      .toBe('/qinggan-travel-handbook/assets/intro/riyueshan-prayer-flags.webp')
   })
 
   it('keeps external and data URLs unchanged', () => {
