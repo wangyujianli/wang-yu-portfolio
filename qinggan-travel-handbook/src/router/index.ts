@@ -9,7 +9,10 @@ export function shouldOpenIntro(hasSeenIntro: boolean, targetName: string | symb
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
-  scrollBehavior: () => ({ top: 0 }),
+  scrollBehavior: (to) => {
+    if (to.hash) return { el: to.hash, top: 92, behavior: 'smooth' }
+    return { top: 0 }
+  },
   routes: [
     { path: '/', name: 'home', component: HomeView },
     { path: '/amap-minimal-test', name: 'amap-minimal-test', component: () => import('@/views/AmapMinimalTestView.vue') },
