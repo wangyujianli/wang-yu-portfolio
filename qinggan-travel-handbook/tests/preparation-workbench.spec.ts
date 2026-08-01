@@ -23,12 +23,17 @@ function makeRouter() {
 }
 
 describe('preparation workbench', () => {
-  it('makes preparation the home page primary next step', () => {
+  it('keeps start exploring on the home page route highlights', () => {
     const wrapper = mount(HomeView, { global: { plugins: [createPinia(), makeRouter()] } })
     const action = wrapper.get('[data-start-exploring]')
 
-    expect(action.attributes('href')).toBe('/preparation')
+    expect(action.element.tagName).toBe('BUTTON')
+    expect(action.attributes('href')).toBeUndefined()
     expect(action.text()).toContain('开始探索')
+    expect(wrapper.find('#route-highlights').exists()).toBe(true)
+    expect(wrapper.find('[data-home-route-reference]').exists()).toBe(true)
+    expect(wrapper.findAll('[data-home-route-day]')).toHaveLength(9)
+    expect(wrapper.findAll('[data-home-route-day] img')).toHaveLength(9)
   })
 
   it('opens with ten concise preparation entries and links each to a real section', () => {

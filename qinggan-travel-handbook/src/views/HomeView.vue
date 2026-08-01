@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import {
-  ArrowRight, BookOpenText, CalendarRange, Camera, Compass, Footprints,
+  ArrowRight, BookOpenText, Camera, Compass, Footprints,
   ListChecks, Map, Milestone, MountainSnow, Sparkles, Waves,
 } from '@lucide/vue'
 import HomeJourneyMap from '@/components/home/HomeJourneyMap.vue'
 import HomeRouteTicket from '@/components/home/HomeRouteTicket.vue'
 import PlaceCard from '@/components/place/PlaceCard.vue'
 import { homeJourneyRouteById, homeJourneyRoutes } from '@/data/homeJourneyRoutes'
+import { nineDayItinerary } from '@/data/nineDayItinerary'
 import { placeById, places, standalonePlaces } from '@/data/places'
+import { publicAssetUrl } from '@/lib/publicAssets'
 import { useJourneyStore } from '@/stores/journey'
 import { useVisitedStore } from '@/stores/visited'
 import type { HomeJourneyRoute, JourneyRouteId } from '@/types/content'
@@ -29,12 +31,33 @@ const selectedRouteNames = computed(() => selectedHomeRoute.value.placeIds
 
 const entries = computed(() => [
   { to: '/places', title: '地点指南', note: `${standalonePlaces.length} 个地点，另有 1 个生态观察子模块`, icon: Compass, className: 'guide' },
-  { to: '/itinerary', title: '九天参考', note: '只是一种走法，随时可以调整', icon: CalendarRange, className: 'itinerary' },
   { to: '/nearby', title: '周边可玩', note: '按多出来的时间判断取舍', icon: Milestone, className: 'nearby' },
   { to: '/photo-guide', title: '拍照宝典', note: '八类场景与六人构图', icon: Camera, className: 'photo' },
   { to: '/highlights', title: '沿途彩蛋', note: '七个话题，顺路再看', icon: Sparkles, className: 'highlights' },
   { to: '/footprints', title: '我的足迹', note: `${visibleVisitedCount.value} 处已去过`, icon: Footprints, className: 'footprints' },
 ])
+
+const routeReferenceImages: Record<string, string> = {
+  'day-1': 'xining',
+  'day-2': 'zhangye-danxia',
+  'day-3': 'jiayuguan-pass',
+  'day-4': 'mingsha-crescent',
+  'day-5': 'dachaidan-emerald',
+  'day-6': 'wusute-yadan',
+  'day-7': 'g315-u-road',
+  'day-8': 'chaka-salt-lake',
+  'day-9': 'qinghai-lake',
+}
+
+const routeReferenceDays = computed(() => nineDayItinerary.map((day) => {
+  const visualPlace = placeById.get(routeReferenceImages[day.id] ?? '')
+
+  return {
+    day,
+    image: visualPlace?.image ?? '/images/places/qinghai-lake.jpg',
+    imageAlt: visualPlace?.imageAlt ?? day.title,
+  }
+}))
 
 const routeChapters = [
   { number: '01', title: '文明向西', places: '西宁、塔尔寺、张掖、嘉峪关、敦煌', icon: BookOpenText },
@@ -49,6 +72,10 @@ function selectHomeRoute(route: HomeJourneyRoute): void {
 
 function syncRouteBeforeMap(): void {
   journey.selectRoute(selectedHomeRoute.value.id)
+}
+
+function scrollToRouteHighlights(): void {
+  document.querySelector('#route-highlights')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 </script>
 
@@ -93,9 +120,9 @@ function syncRouteBeforeMap(): void {
             />
           </div>
           <div class="home-route-panel__actions">
-            <RouterLink to="/preparation" class="button-primary" data-start-exploring>
+            <button type="button" class="button-primary" data-start-exploring @click="scrollToRouteHighlights">
               <ListChecks :size="19" />开始探索
-            </RouterLink>
+            </button>
             <RouterLink to="/map" class="button-secondary" @click="syncRouteBeforeMap">
               <Map :size="19" />直接看地图
             </RouterLink>
@@ -118,6 +145,25 @@ function syncRouteBeforeMap(): void {
           </div>
           <h3>{{ chapter.title }}</h3>
           <p>{{ chapter.places }}</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="route-highlights" class="home-itinerary-reference" data-home-route-reference>
+      <header class="home-itinerary-reference__intro">
+        <p class="eyebrow">ROUTE HIGHLIGHTS</p>
+        <h2>线路简介与每日亮点</h2>
+        <p>这里把原来的九天参考浓缩成首页可直接浏览的图文路线。它只是帮助判断节奏和重点，不是必须照做的固定日程。</p>
+      </header>
+      <div class="home-itinerary-reference__grid">
+        <article v-for="item in routeReferenceDays" :key="item.day.id" class="home-day-card" data-home-route-day>
+          <img :src="publicAssetUrl(item.image)" :alt="item.imageAlt" loading="lazy">
+          <div class="home-day-card__body">
+            <span>D{{ String(item.day.day).padStart(2, '0') }}</span>
+            <h3>{{ item.day.title }}</h3>
+            <p>{{ item.day.mainLine }}</p>
+            <small>{{ item.day.photoTheme }}</small>
+          </div>
         </article>
       </div>
     </section>
@@ -250,6 +296,80 @@ function syncRouteBeforeMap(): void {
 .route-value__chapters h3 { margin: 24px 0 9px; font-size: 1.55rem; }
 .route-value__chapters p { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.7; }
 
+.home-itinerary-reference {
+  display: grid;
+  gap: 22px;
+  margin: 42px 0;
+  scroll-margin-top: 92px;
+}
+
+.home-itinerary-reference__intro {
+  max-width: 820px;
+}
+
+.home-itinerary-reference__intro h2 {
+  margin: 8px 0 12px;
+  font-size: clamp(2.1rem, 5vw, 4rem);
+}
+
+.home-itinerary-reference__intro p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: .98rem;
+  line-height: 1.8;
+}
+
+.home-itinerary-reference__grid {
+  display: grid;
+  gap: 14px;
+}
+
+.home-day-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgb(255 255 255 / 42%);
+  box-shadow: var(--shadow-soft);
+}
+
+.home-day-card img {
+  display: block;
+  width: 100%;
+  height: 178px;
+  object-fit: cover;
+}
+
+.home-day-card__body {
+  padding: 18px 18px 20px;
+}
+
+.home-day-card__body span {
+  color: var(--sunset);
+  font: 700 .76rem/1 var(--serif);
+  letter-spacing: .16em;
+}
+
+.home-day-card__body h3 {
+  margin: 10px 0 8px;
+  font-size: 1.25rem;
+}
+
+.home-day-card__body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.7;
+}
+
+.home-day-card__body small {
+  display: block;
+  margin-top: 14px;
+  color: var(--lake);
+  font-size: .76rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
 .route-folio { margin: 42px 0; padding: 24px 0; border-block: 1px solid var(--line); }
 .route-folio__heading { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 22px; font-size: .78rem; }
 .route-folio__heading span { color: var(--sunset); letter-spacing: .12em; }
@@ -272,6 +392,7 @@ function syncRouteBeforeMap(): void {
   .home-route-panel__tickets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .route-value { padding: 38px; }
   .route-value__chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .home-itinerary-reference__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .entry-card { grid-column: span 4; }
   .entry-card--guide { grid-column: span 7; }
   .entry-card--photo { grid-column: span 5; }

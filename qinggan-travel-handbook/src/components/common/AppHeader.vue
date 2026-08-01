@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { CalendarRange, Camera, Compass, Footprints, House, ListChecks, Map, Milestone } from '@lucide/vue'
+import { Camera, Compass, Footprints, House, ListChecks, Map, Milestone } from '@lucide/vue'
 
 const navItems = [
   { to: '/', label: '首页', icon: House },
@@ -12,7 +12,6 @@ const navItems = [
 ]
 
 const journeyItems = [
-  { to: '/itinerary', label: '九天参考', icon: CalendarRange },
   { to: '/nearby', label: '周边可玩', icon: Milestone },
 ]
 </script>
