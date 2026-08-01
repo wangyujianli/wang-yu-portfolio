@@ -12,4 +12,20 @@ describe('place filtering', () => {
     expect(lakes.length).toBeGreaterThan(0)
     expect(lakes.every((place) => place.category === '湖泊盐湖')).toBe(true)
   })
+
+  it('returns only places in the selected priority', () => {
+    const corePlaces = filterPlaces(places, 'all', 'core')
+    expect(corePlaces.length).toBeGreaterThan(0)
+    expect(corePlaces.length).toBeLessThan(places.length)
+    expect(corePlaces.every((place) => place.value.priority === 'core')).toBe(true)
+  })
+
+  it('combines category and priority filters', () => {
+    const recommendedLakes = filterPlaces(places, '湖泊盐湖', 'recommended')
+    expect(recommendedLakes.map((place) => place.id)).toEqual(['dachaidan-emerald', 'chaka-salt-lake'])
+  })
+
+  it('treats an unknown priority as all priorities', () => {
+    expect(filterPlaces(places, 'all', 'unknown')).toHaveLength(16)
+  })
 })

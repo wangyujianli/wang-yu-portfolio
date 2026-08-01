@@ -15,6 +15,20 @@ function hideBrokenImage(event: Event): void {
 <template>
   <article class="map-place-sheet paper-card">
     <button type="button" class="map-place-sheet__close" aria-label="关闭地点卡片" @click="$emit('close')"><X :size="19" /></button>
+    <p class="eyebrow">PLACE {{ String(place.routeOrder).padStart(2, '0') }} · {{ place.category }}</p>
+    <h2>{{ place.name }}</h2>
+    <div class="map-place-sheet__reason">
+      <span>为什么值得停下来</span>
+      <p data-map-reason>{{ place.value.reasonToVisit }}</p>
+    </div>
+    <dl>
+      <div><dt>推荐等级</dt><dd data-priority>{{ place.value.priorityLabel }}</dd></div>
+      <div><dt>建议停留</dt><dd>{{ place.suggestedDuration }}</dd></div>
+    </dl>
+    <div class="map-place-sheet__actions">
+      <RouterLink :to="`/places/${place.slug}`" class="button-primary">查看完整攻略 <ArrowUpRight :size="18" /></RouterLink>
+      <VisitedToggle :place-id="place.id" compact />
+    </div>
     <img
       class="map-place-sheet__image"
       :src="place.image"
@@ -23,17 +37,6 @@ function hideBrokenImage(event: Event): void {
       decoding="async"
       @error="hideBrokenImage"
     />
-    <p class="eyebrow">PLACE {{ String(place.routeOrder).padStart(2, '0') }} · {{ place.category }}</p>
-    <h2>{{ place.name }}</h2>
-    <p>{{ place.summary }}</p>
-    <dl>
-      <div><dt>建议停留</dt><dd>{{ place.suggestedDuration }}</dd></div>
-      <div><dt>观赏时段</dt><dd>{{ place.bestViewingTime }}</dd></div>
-    </dl>
-    <div class="map-place-sheet__actions">
-      <RouterLink :to="`/places/${place.slug}`" class="button-primary">打开地点页 <ArrowUpRight :size="18" /></RouterLink>
-      <VisitedToggle :place-id="place.id" compact />
-    </div>
   </article>
 </template>
 
@@ -46,8 +49,8 @@ function hideBrokenImage(event: Event): void {
 .map-place-sheet__image {
   display: block;
   width: 100%;
-  height: clamp(150px, 26vw, 230px);
-  margin-bottom: 20px;
+  height: clamp(110px, 18vw, 180px);
+  margin-top: 20px;
   border-radius: 18px;
   object-fit: cover;
 }
@@ -72,10 +75,12 @@ function hideBrokenImage(event: Event): void {
   font-size: clamp(2rem, 5vw, 3.2rem);
 }
 
-.map-place-sheet > p:not(.eyebrow) { color: var(--muted); }
+.map-place-sheet__reason > span { color: var(--sunset); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; }
+.map-place-sheet__reason p { margin: 8px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.75; }
 .map-place-sheet dl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 22px 0; }
 .map-place-sheet dl div { padding: 13px; border: 1px solid var(--line); border-radius: 14px; }
 .map-place-sheet dt { color: var(--muted); font-size: 0.72rem; }
-.map-place-sheet dd { margin: 5px 0 0; font-size: 0.82rem; font-weight: 700; }
+.map-place-sheet dd { margin: 5px 0 0; font-size: 0.86rem; font-weight: 700; }
+.map-place-sheet [data-priority] { color: var(--sunset); }
 .map-place-sheet__actions { display: flex; flex-wrap: wrap; gap: 9px; }
 </style>

@@ -4,6 +4,7 @@ import { ArrowLeft, MapPin } from '@lucide/vue'
 import { useRoute } from 'vue-router'
 import PlaceFacts from '@/components/place/PlaceFacts.vue'
 import PlaceSections from '@/components/place/PlaceSections.vue'
+import PlaceValueOverview from '@/components/place/PlaceValueOverview.vue'
 import VisitedToggle from '@/components/common/VisitedToggle.vue'
 import WeatherPanel from '@/components/weather/WeatherPanel.vue'
 import { placeBySlug } from '@/data/places'
@@ -31,10 +32,10 @@ function hideBrokenImage(event: Event): void {
         <h1>{{ place.name }}</h1>
         <p class="place-hero__region"><MapPin :size="17" />{{ place.region }}</p>
         <p class="place-hero__summary">{{ place.summary }}</p>
-        <VisitedToggle :place-id="place.id" />
       </div>
     </section>
 
+    <PlaceValueOverview :place="place" />
     <WeatherPanel class="place-weather" :place-id="place.id" :coordinates="place.weatherCoordinates" />
 
     <section class="place-layout">

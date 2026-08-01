@@ -12,7 +12,13 @@ function hideBrokenImage(event: Event): void {
 </script>
 
 <template>
-  <article class="place-card paper-card" :class="{ 'place-card--featured': featured }" :data-tone="place.visualTone">
+  <article
+    class="place-card paper-card"
+    :class="{ 'place-card--featured': featured }"
+    :data-tone="place.visualTone"
+    data-place-card
+    :data-priority="place.value.priority"
+  >
     <div class="place-card__visual">
       <img :src="place.image" :alt="place.imageAlt" loading="lazy" decoding="async" @error="hideBrokenImage" />
       <span class="place-card__number">{{ String(place.routeOrder).padStart(2, '0') }}</span>
@@ -24,7 +30,11 @@ function hideBrokenImage(event: Event): void {
         <span class="place-card__region"><MapPin :size="14" />{{ place.region }}</span>
       </div>
       <h3>{{ place.name }}</h3>
-      <p>{{ place.summary }}</p>
+      <span class="place-card__priority" data-priority>{{ place.value.priorityLabel }}</span>
+      <p class="place-card__reason" data-card-reason>{{ place.value.reasonToVisit }}</p>
+      <div class="place-card__tags" aria-label="适合">
+        <span v-for="tag in place.value.bestFor.slice(0, 3)" :key="tag" data-best-for>{{ tag }}</span>
+      </div>
       <div class="place-card__footer">
         <RouterLink :to="`/places/${place.slug}`" class="place-card__link">
           展开这一页 <ArrowUpRight :size="18" />
@@ -165,10 +175,36 @@ function hideBrokenImage(event: Event): void {
   font-size: 1.55rem;
 }
 
-.place-card p {
+.place-card__priority {
+  align-self: flex-start;
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: var(--sunset);
+  background: rgb(217 109 59 / 10%);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.place-card__reason {
   flex: 1;
+  margin: 13px 0;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
+  line-height: 1.72;
+}
+
+.place-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.place-card__tags span {
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.68rem;
 }
 
 .place-card__footer {

@@ -20,6 +20,18 @@ export interface ReservationInfo {
   note: string
 }
 
+export type PlacePriority = 'core' | 'recommended' | 'along-the-way' | 'interest' | 'optional'
+
+export interface PlaceValue {
+  reasonToVisit: string
+  uniqueness: string
+  bestFor: string[]
+  priority: PlacePriority
+  priorityLabel: string
+  ifTimeIsLimited: string
+  contrastWithNearby?: string
+}
+
 export interface Place {
   id: string
   slug: string
@@ -29,6 +41,7 @@ export interface Place {
   routeOrder: number
   coordinates: Coordinates
   summary: string
+  value: PlaceValue
   recommendation: number
   worthDetour: string
   suggestedDuration: string

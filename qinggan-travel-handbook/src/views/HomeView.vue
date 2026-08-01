@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowRight, Camera, Compass, Footprints, ListChecks, Map, Sparkles } from '@lucide/vue'
+import { ArrowRight, BookOpenText, Camera, Compass, Footprints, ListChecks, Map, MountainSnow, Sparkles, Waves } from '@lucide/vue'
 import PlaceCard from '@/components/place/PlaceCard.vue'
 import { places } from '@/data/places'
 import { routeStops } from '@/data/route'
@@ -15,6 +15,12 @@ const entries = [
   { to: '/highlights', title: '沿途彩蛋', note: '七个话题，顺路再看', icon: Sparkles, className: 'highlights' },
   { to: '/footprints', title: '我的足迹', note: `${visited.count} 处已去过`, icon: Footprints, className: 'footprints' },
   { to: '/preparation', title: '出发准备', note: '票务、道路与开放信息', icon: ListChecks, className: 'prepare' },
+]
+
+const routeChapters = [
+  { number: '01', title: '文明向西', places: '西宁、塔尔寺、张掖、嘉峪关、敦煌', icon: BookOpenText },
+  { number: '02', title: '进入荒野', places: '阿克塞、G315、水上雅丹、大柴旦', icon: MountainSnow },
+  { number: '03', title: '回到湖泊', places: '茶卡盐湖、青海湖', icon: Waves },
 ]
 </script>
 
@@ -45,6 +51,24 @@ const entries = [
         <strong>{{ visited.count }}</strong>
         <p>共 16 处地点，可随时标记已去过。</p>
       </aside>
+    </section>
+
+    <section class="route-value" data-route-value>
+      <header class="route-value__intro">
+        <p class="eyebrow">WHY THIS ROUTE</p>
+        <h2>为什么是青甘大环线</h2>
+        <p>这条路线不是简单串联景点，而是从河湟谷地进入河西走廊，再经过敦煌绿洲、柴达木荒原、盐湖与青海湖。一条路上，可以连续看到宗教、边塞、丝路、沙漠、戈壁、雅丹、盐湖、雪山和草原。</p>
+      </header>
+      <div class="route-value__chapters">
+        <article v-for="chapter in routeChapters" :key="chapter.number" data-route-chapter>
+          <div class="route-value__chapter-head">
+            <span>{{ chapter.number }}</span>
+            <component :is="chapter.icon" :size="22" :stroke-width="1.6" />
+          </div>
+          <h3>{{ chapter.title }}</h3>
+          <p>{{ chapter.places }}</p>
+        </article>
+      </div>
     </section>
 
     <section class="route-folio" aria-label="建议探索顺序">
@@ -218,6 +242,68 @@ const entries = [
   border-block: 1px solid var(--line);
 }
 
+.route-value {
+  display: grid;
+  gap: 24px;
+  margin: 48px 0 28px;
+  padding: 30px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 92% 10%, rgb(217 109 59 / 12%), transparent 24%),
+    rgb(255 255 255 / 34%);
+}
+
+.route-value__intro h2 {
+  margin: 9px 0 16px;
+  font-size: clamp(2.2rem, 6vw, 4.6rem);
+}
+
+.route-value__intro > p:last-child {
+  max-width: 850px;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(0.98rem, 1.7vw, 1.14rem);
+  line-height: 1.9;
+}
+
+.route-value__chapters {
+  display: grid;
+  gap: 12px;
+}
+
+.route-value__chapters article {
+  min-height: 176px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgb(247 240 229 / 68%);
+}
+
+.route-value__chapter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--sunset);
+}
+
+.route-value__chapter-head span {
+  font: 700 0.78rem/1 var(--serif);
+  letter-spacing: 0.14em;
+}
+
+.route-value__chapters h3 {
+  margin: 24px 0 9px;
+  font-size: 1.55rem;
+}
+
+.route-value__chapters p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+
 .route-folio__heading {
   display: flex;
   justify-content: space-between;
@@ -311,11 +397,14 @@ const entries = [
   .entry-card--highlights { grid-column: span 5; }
   .entry-card--footprints { grid-column: span 3; }
   .entry-card--prepare { grid-column: span 4; }
+  .route-value { padding: 38px; }
+  .route-value__chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (min-width: 1100px) {
   .home-hero__copy { grid-column: 1 / span 5; }
   .home-cover { grid-column: 6 / span 6; }
   .journey-counter { grid-column: 10 / -1; align-self: end; margin: 0 0 44px -50px; }
+  .route-value { grid-template-columns: minmax(0, 1.1fr) minmax(560px, 1.4fr); align-items: end; }
 }
 </style>

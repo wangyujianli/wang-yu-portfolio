@@ -1,4 +1,4 @@
-import type { Place } from '@/types/content'
+import type { Place, PlacePriority } from '@/types/content'
 
 const place = (item: Place): Place => item
 
@@ -7,6 +7,13 @@ export const places: Place[] = [
     id: 'xining', slug: 'xining', name: '西宁', region: '青海 · 西宁', category: '文化遗址', routeOrder: 1,
     coordinates: [101.7782, 36.6171], weatherCoordinates: [101.7782, 36.6171],
     summary: '它不是匆匆取车的中转站，而是整条环线最适合慢慢把呼吸和节奏调到高原频道的开场。',
+    value: {
+      reasonToVisit: '西宁把河湟谷地的多民族生活、清真寺街区与高原城市日常放在同一幅画面里。它也是整条环线的地理序章，先读懂这里，后面的寺院、走廊与湖泊会更有来处。',
+      uniqueness: '全程少有的高原城市样本，也是自然景观之间最有生活气息的一站。',
+      bestFor: ['城市人文', '高原适应', '当地风味'],
+      priority: 'recommended', priorityLabel: '强烈建议',
+      ifTimeIsLimited: '保留一段街区漫步和一顿本地餐即可，不必把城市景点排满。',
+    },
     recommendation: 4, worthDetour: '值得作为环线开场与收束，不必塞满打卡点。',
     suggestedDuration: '半天至一天', bestViewingTime: '清晨街巷、傍晚河畔', suitableWeather: '晴间多云最舒展，阴天也适合逛馆与吃饭。',
     walkingIntensity: '轻松', physicalNotes: ['城区海拔约 2,260 米', '街区步行多为平路', '初到时把节奏放慢一点更容易进入状态'],
@@ -25,6 +32,14 @@ export const places: Place[] = [
     id: 'kumbum-monastery', slug: 'taer-temple', name: '塔尔寺', region: '青海 · 湟中', category: '文化遗址', routeOrder: 2,
     coordinates: [101.5714, 36.4829], weatherCoordinates: [101.5714, 36.4829],
     summary: '真正值得看的不只是建筑颜色，而是院落、转经路与日常礼佛共同形成的秩序感。',
+    value: {
+      reasonToVisit: '塔尔寺让人从建筑、壁画、酥油花与转经路线中，看到藏传佛教如何进入青海的日常生活。它不是孤立的古建筑群，而是一处仍然延续信仰秩序的文化现场。',
+      uniqueness: '这里的核心不是宏大外观，而是仍在运转的宗教空间与细密工艺。',
+      bestFor: ['宗教文化', '建筑细节', '历史'],
+      priority: 'core', priorityLabel: '核心必看',
+      ifTimeIsLimited: '建议保留主院落与重点艺术内容，减少外围停留，不宜整站舍弃。',
+      contrastWithNearby: '与西宁的城市生活相比，这里更集中地呈现河湟地区的信仰与艺术传统。',
+    },
     recommendation: 5, worthDetour: '值得专程，是理解青海人文气质的重要一站。',
     suggestedDuration: '2.5至4小时', bestViewingTime: '开门后或傍晚前', suitableWeather: '晴天色彩通透，薄云更适合拍建筑细节。',
     walkingIntensity: '中等', physicalNotes: ['院落之间有坡道与台阶', '参观线路较长', '可在开阔院落间自然停留'],
@@ -43,6 +58,13 @@ export const places: Place[] = [
     id: 'menyuan-gangshika', slug: 'menyuan-gangshika', name: '门源油菜花与岗什卡雪峰', region: '青海 · 门源', category: '草原雪山', routeOrder: 3,
     coordinates: [101.6224, 37.3767], weatherCoordinates: [101.6224, 37.3767],
     summary: '花海只是前景，真正让画面成立的是祁连山、村落与雪峰一起撑起的辽阔尺度。',
+    value: {
+      reasonToVisit: '门源最有价值的不是单看一片油菜花，而是花田、村落、祁连山与岗什卡雪峰同时出现的纵深。花期和能见度配合时，它会把青甘交界的农业与高山尺度讲得很完整。',
+      uniqueness: '环线上少有能把农田色块与终年雪峰放进同一视野的地方。',
+      bestFor: ['雪山花田', '风光摄影', '六人合影'],
+      priority: 'recommended', priorityLabel: '强烈建议',
+      ifTimeIsLimited: '花期且雪峰可见时保留；花期偏差或云层完全遮山时可缩短停留。',
+    },
     recommendation: 5, worthDetour: '花期与能见度合适时非常值得专程。',
     suggestedDuration: '2至4小时', bestViewingTime: '上午通透时或傍晚侧光', suitableWeather: '雨后初晴、低风速、雪峰可见时最好。',
     walkingIntensity: '轻松至中等', physicalNotes: ['观景台与花田小路各有不同步行量', '海拔与日照感受明显', '部分机位之间需要乘车转换'],
@@ -61,6 +83,13 @@ export const places: Place[] = [
     id: 'biandukou', slug: 'biandukou', name: '扁都口', region: '甘肃 · 民乐', category: '草原雪山', routeOrder: 4,
     coordinates: [100.9972, 38.2121], weatherCoordinates: [100.9972, 38.2121],
     summary: '它像一页天然的转场：从青海高原穿过山口，河西走廊在前方慢慢打开。',
+    value: {
+      reasonToVisit: '扁都口的意义在于地理转场：车辆穿过祁连山口，视野从高原山地逐渐转向河西走廊。草坡、花田和道路并不喧闹，却能让人直观看见两种地貌如何衔接。',
+      uniqueness: '它是一处“看懂路线变化”的山口，而不是依靠单一地标成立的景点。',
+      bestFor: ['公路转场', '草原山口', '短暂停留'],
+      priority: 'along-the-way', priorityLabel: '顺路值得',
+      ifTimeIsLimited: '可保留一次二三十分钟的自然停靠；若天气低能见度，直接沿主线通过也不会留下关键缺口。',
+    },
     recommendation: 4, worthDetour: '顺路时值得停，不必脱离主线单独往返。',
     suggestedDuration: '40分钟至1.5小时', bestViewingTime: '上午或傍晚侧光', suitableWeather: '云层有层次、能见度较好时。',
     walkingIntensity: '轻松', physicalNotes: ['以观景和短距离步行为主', '山口风感明显', '停车与观景点分布随沿线实际情况'],
@@ -79,6 +108,14 @@ export const places: Place[] = [
     id: 'zhangye-danxia', slug: 'zhangye-danxia', name: '张掖七彩丹霞', region: '甘肃 · 张掖', category: '沙漠雅丹', routeOrder: 5,
     coordinates: [100.0612, 38.9707], weatherCoordinates: [100.0612, 38.9707],
     summary: '它的魅力不是“颜色越艳越好”，而是层层山体在侧光里显露出的纹理和尺度。',
+    value: {
+      reasonToVisit: '张掖丹霞把漫长地质作用直接摊开在视野里：褶皱、色带与起伏山体在侧光下层层分离。即使不追求高饱和照片，也能从观景台读到河西走廊极少见的地貌结构。',
+      uniqueness: '其他荒漠站点强调空旷，这里最不可替代的是彩色沉积层与褶皱纹理。',
+      bestFor: ['地貌', '摄影', '日落'],
+      priority: 'core', priorityLabel: '核心必看',
+      ifTimeIsLimited: '建议保留并减少观景台数量，集中看一到两个光线最合适的区域。',
+      contrastWithNearby: '它与敦煌、柴达木的沙漠荒原不同，重点是山体本身的色层与构造。',
+    },
     recommendation: 5, worthDetour: '值得专程，是环线视觉冲击最稳定的一站。',
     suggestedDuration: '3至5小时', bestViewingTime: '雨后初晴或日落前侧光', suitableWeather: '薄云、通透、刚下过雨时层次最好。',
     walkingIntensity: '中等', physicalNotes: ['景交车串联多个观景台', '观景台有坡道和台阶', '热门时段站立等待较多'],
@@ -97,6 +134,13 @@ export const places: Place[] = [
     id: 'jiayuguan-pass', slug: 'jiayuguan-pass', name: '嘉峪关关城', region: '甘肃 · 嘉峪关', category: '文化遗址', routeOrder: 6,
     coordinates: [98.2232, 39.8006], weatherCoordinates: [98.2232, 39.8006],
     summary: '城门、瓮城与远处祁连雪山共同构成的，才是“天下第一雄关”的完整气势。',
+    value: {
+      reasonToVisit: '嘉峪关不是一座孤立城楼，而是一整套依山川与戈壁展开的边防空间。走过城门、瓮城和城墙，再望向祁连山，丝路交通与明代防御体系会从名词变成可感知的距离。',
+      uniqueness: '这里能用行走理解关隘结构，历史感来自空间关系而非陈列数量。',
+      bestFor: ['边塞历史', '古建筑', '城墙合影'],
+      priority: 'core', priorityLabel: '核心必看',
+      ifTimeIsLimited: '保留关城主轴和登城墙体验，展馆内容可按兴趣缩短。',
+    },
     recommendation: 5, worthDetour: '值得专程，尤其适合把历史空间真正走一遍。',
     suggestedDuration: '2.5至4小时', bestViewingTime: '上午斜光或傍晚', suitableWeather: '晴朗通透、有少量云层时。',
     walkingIntensity: '中等', physicalNotes: ['关城内台阶较多', '城墙风感明显', '主轴线与展馆之间距离适中'],
@@ -115,6 +159,13 @@ export const places: Place[] = [
     id: 'son-of-earth', slug: 'son-of-earth', name: '瓜州大地之子', region: '甘肃 · 瓜州', category: '沿途彩蛋', routeOrder: 7,
     coordinates: [95.9101, 40.5088], weatherCoordinates: [95.9101, 40.5088],
     summary: '巨大的婴孩伏在戈壁上，荒凉尺度和柔软姿态之间的反差，远比“合影打卡”更耐看。',
+    value: {
+      reasonToVisit: '大地之子把柔软的婴孩形象放进辽阔戈壁，作品尺度与周围荒凉形成直接反差。它的价值不只是一张合影，而是让长途公路中抽象的“无人之境”突然有了人的情绪。',
+      uniqueness: '大型人物雕塑与真实戈壁尺度正面相撞，是环线里最鲜明的公共艺术场景。',
+      bestFor: ['公共艺术', '公路休整', '人物摄影'],
+      priority: 'along-the-way', priorityLabel: '顺路值得',
+      ifTimeIsLimited: '与瓜州主线同路时短停即可；若需要明显绕行，可把时间留给敦煌。',
+    },
     recommendation: 4, worthDetour: '主线顺路时值得停留，不必专程长距离往返。',
     suggestedDuration: '30至60分钟', bestViewingTime: '清晨或傍晚低角度光', suitableWeather: '晴天与有层次的阴天都适合。',
     walkingIntensity: '轻松', physicalNotes: ['停车后以短距离步行为主', '戈壁无遮挡，日晒和风感直接', '地面碎石较多'],
@@ -133,6 +184,14 @@ export const places: Place[] = [
     id: 'boundless', slug: 'guazhou-boundless', name: '瓜州无界', region: '甘肃 · 瓜州', category: '沿途彩蛋', routeOrder: 8,
     coordinates: [95.8664, 40.5315], weatherCoordinates: [95.8664, 40.5315],
     summary: '一座镂空建筑把风、光与戈壁同时装进画面，越是简洁的构图越能显出它的轻盈。',
+    value: {
+      reasonToVisit: '无界用镂空结构把天空、风和戈壁纳入建筑内部，适合观察光线穿过网格后形成的变化。它与附近雕塑共同构成瓜州公共艺术段，但单体体验更偏建筑与构图兴趣。',
+      uniqueness: '它不靠实体体量取胜，而是用透明结构让建筑边界逐渐消失。',
+      bestFor: ['建筑构图', '光影', '顺路小景'],
+      priority: 'optional', priorityLabel: '时间紧可舍弃',
+      ifTimeIsLimited: '可与大地之子二选一；偏爱建筑摄影时保留，否则不影响整条路线的核心体验。',
+      contrastWithNearby: '大地之子强调人物与荒原的反差，无界更适合观察结构、透视与光影。',
+    },
     recommendation: 4, worthDetour: '与大地之子顺路时值得一起看。',
     suggestedDuration: '30至50分钟', bestViewingTime: '侧光与日落前', suitableWeather: '晴朗或云影清楚时。',
     walkingIntensity: '轻松', physicalNotes: ['以平缓戈壁短距离步行为主', '没有连续遮阴', '风沙天气体验变化明显'],
@@ -151,6 +210,14 @@ export const places: Place[] = [
     id: 'mogao-grottoes', slug: 'mogao-grottoes', name: '莫高窟', region: '甘肃 · 敦煌', category: '文化遗址', routeOrder: 9,
     coordinates: [94.8129, 40.0419], weatherCoordinates: [94.8129, 40.0419],
     summary: '它最动人的地方不在“看了多少窟”，而在有限光线里忽然与千年前的颜色、线条和愿望相遇。',
+    value: {
+      reasonToVisit: '莫高窟把千年丝路上的宗教、绘画、雕塑与跨文化交流保存在洞窟之中。真正重要的不是看过多少编号，而是在讲解与有限光线里理解图像如何连接中原、西域和更远的世界。',
+      uniqueness: '全程文化密度最高的一站，内容来自原址洞窟，而不是后来复原的主题景观。',
+      bestFor: ['丝路文明', '壁画艺术', '历史'],
+      priority: 'core', priorityLabel: '核心必看',
+      ifTimeIsLimited: '应优先保留预约场次，减少同日其他项目；若票务未落实，再安排替代展陈。',
+      contrastWithNearby: '嘉峪关讲边防与通道，莫高窟讲沿通道发生的信仰、艺术与文明交流。',
+    },
     recommendation: 5, worthDetour: '非常值得专程，也是整条环线最需要提前安排的一站。',
     suggestedDuration: '3.5至5小时', bestViewingTime: '按预约场次到访', suitableWeather: '参观主体受天气影响较小，外景晴天更通透。',
     walkingIntensity: '中等', physicalNotes: ['数字中心与窟区之间有接驳', '窟区包含台阶与连续步行', '参观节奏随场次与现场组织'],
@@ -169,6 +236,13 @@ export const places: Place[] = [
     id: 'mingsha-crescent', slug: 'mingsha-crescent-spring', name: '鸣沙山月牙泉', region: '甘肃 · 敦煌', category: '沙漠雅丹', routeOrder: 10,
     coordinates: [94.6757, 40.0875], weatherCoordinates: [94.6757, 40.0875],
     summary: '沙山、泉水和暮色同框已经足够经典，真正舒服的玩法是给风与光一点时间。',
+    value: {
+      reasonToVisit: '鸣沙山月牙泉把高大沙丘、绿洲泉水与敦煌暮色集中在很近的范围内。它让人既能感到沙漠的尺度，也能理解绿洲为何珍贵，傍晚光线变化又为停留增加了层次。',
+      uniqueness: '环线中少有能近距离同时看见沙山曲线、泉水与城市绿洲关系的地方。',
+      bestFor: ['沙漠', '日落', '六人合影'],
+      priority: 'core', priorityLabel: '核心必看',
+      ifTimeIsLimited: '保留傍晚一段完整光线即可，体验项目可减少，不必把每项活动都排进去。',
+    },
     recommendation: 5, worthDetour: '值得专程，敦煌自然景观的代表。',
     suggestedDuration: '3至5小时', bestViewingTime: '日落前两小时至夜色初起', suitableWeather: '低风速、能见度好、云层不过厚。',
     walkingIntensity: '中等至偏高', physicalNotes: ['沙地行走比硬地耗力', '景区范围较大', '日落后温度下降较快'],
@@ -187,6 +261,13 @@ export const places: Place[] = [
     id: 'boluo-zhuanjing', slug: 'boluo-zhuanjing', name: '博罗转井石油小镇', region: '甘肃 · 阿克塞', category: '沿途彩蛋', routeOrder: 11,
     coordinates: [94.3405, 39.6337], weatherCoordinates: [94.3405, 39.6337],
     summary: '旧建筑、空街与荒山构成天然片场感，适合拍一组不靠夸张动作也有故事的照片。',
+    value: {
+      reasonToVisit: '博罗转井留下的旧建筑、空街与周围荒山带有清晰的时代断面，也因影视取景形成独特叙事感。这里的乐趣更接近观察废墟、空间和镜头语言，并非人人都会喜欢。',
+      uniqueness: '它是路线中电影感最强的废墟场景，价值主要来自氛围而非自然奇观。',
+      bestFor: ['电影感摄影', '旧址', '故事画面'],
+      priority: 'interest', priorityLabel: '兴趣向选择',
+      ifTimeIsLimited: '喜欢电影、废墟或人像摄影时保留；兴趣不强可以直接把时间留给 G315 与雅丹。',
+    },
     recommendation: 3, worthDetour: '顺路且喜欢电影感时值得停；不必人人都专程。',
     suggestedDuration: '1至2小时', bestViewingTime: '上午斜光或傍晚', suitableWeather: '晴天硬朗，阴天更有旧城气质。',
     walkingIntensity: '轻松至中等', physicalNotes: ['地面粗糙且有碎石', '建筑之间步行距离不长', '遮阴有限'],
@@ -205,6 +286,13 @@ export const places: Place[] = [
     id: 'g315-u-road', slug: 'g315-u-road', name: 'G315 U形公路', region: '青海 · 柴达木', category: '公路风景', routeOrder: 12,
     coordinates: [95.129, 37.394], weatherCoordinates: [95.129, 37.394],
     summary: '真正好看的不是某一个数字路碑，而是公路在荒原上起伏、消失又出现的纵深感。',
+    value: {
+      reasonToVisit: 'G315 的价值是一整段公路与柴达木荒原共同形成的纵深：路面越过起伏地形，远山与天际不断改变比例。它不是一个固定机位，而是进入盆地后持续发生的空间体验。',
+      uniqueness: '这里的主角是路本身，风景随着车辆前进连续变化，不依赖单一景区边界。',
+      bestFor: ['公路风景', '荒原尺度', '车辆合影'],
+      priority: 'along-the-way', priorityLabel: '顺路值得',
+      ifTimeIsLimited: '既然经过就把观察留在沿途，选择正规停靠点短停；无需为某个同款坡度反复寻找。',
+    },
     recommendation: 4, worthDetour: '本就走 G315 时值得观察，不需要追逐唯一同款机位。',
     suggestedDuration: '沿途择机短停', bestViewingTime: '上午侧光或傍晚低光', suitableWeather: '能见度好、风沙较弱时。',
     walkingIntensity: '轻松', physicalNotes: ['以车行观察为主', '沿线距离长且补给分散', '风和日晒直接'],
@@ -223,6 +311,14 @@ export const places: Place[] = [
     id: 'wusute-yadan', slug: 'wusute-water-yadan', name: '乌素特水上雅丹', region: '青海 · 海西', category: '沙漠雅丹', routeOrder: 13,
     coordinates: [93.1936, 37.2753], weatherCoordinates: [93.1936, 37.2753],
     summary: '雅丹本来属于荒漠，水面却把它们变成漂浮的岛屿，这种不合常理的组合最有吸引力。',
+    value: {
+      reasonToVisit: '乌素特把通常出现在干旱荒漠中的雅丹土丘放进开阔水面，风、倒影和孤岛轮廓不断改变地貌的表情。这种水与荒原并置的关系，在整条环线上几乎没有替代。',
+      uniqueness: '它是世界少见的水上雅丹景观，水面让风蚀地貌获得完全不同的尺度与光线。',
+      bestFor: ['独特地貌', '水面倒影', '日落'],
+      priority: 'core', priorityLabel: '核心必看',
+      ifTimeIsLimited: '建议保留核心观景段并缩短外围活动；若开放或道路条件变化，再转向大柴旦。',
+      contrastWithNearby: '大柴旦看矿物盐湖的色块，这里看水面与风蚀土丘共同塑造的立体空间。',
+    },
     recommendation: 5, worthDetour: '值得专程，是柴达木段最独特的地貌之一。',
     suggestedDuration: '2.5至4小时', bestViewingTime: '上午通透时或日落前', suitableWeather: '低风、能见度好、有少量云层。',
     walkingIntensity: '中等', physicalNotes: ['景区范围较大', '栈道与沙石路面交替', '风大时体感下降明显'],
@@ -241,6 +337,14 @@ export const places: Place[] = [
     id: 'dachaidan-emerald', slug: 'dachaidan-emerald-lake', name: '大柴旦翡翠湖', region: '青海 · 海西', category: '湖泊盐湖', routeOrder: 14,
     coordinates: [95.1516, 37.8436], weatherCoordinates: [95.1516, 37.8436],
     summary: '它不是一整片统一的绿色，而是一格一格矿物浓度不同的湖面，在高处看尤其像调色盘。',
+    value: {
+      reasonToVisit: '大柴旦翡翠湖由不同矿物浓度的盐池组成，蓝、绿、白色在俯视和侧光下形成清晰分区。它补充了柴达木荒原的色彩层次，也比单一镜面湖面更适合观察变化。',
+      uniqueness: '多块盐池像天然调色盘，重点是色块差异，而不是追求完整天空倒影。',
+      bestFor: ['盐湖色彩', '摄影', '轻松游览'],
+      priority: 'recommended', priorityLabel: '强烈建议',
+      ifTimeIsLimited: '与水上雅丹同段时可缩短为一轮重点湖区；光线平淡或风大时不必久候。',
+      contrastWithNearby: '茶卡更强调开阔地平线和倒影，大柴旦更像分格展开的矿物色谱。',
+    },
     recommendation: 5, worthDetour: '顺着柴达木主线非常值得，晴天颜色层次更明显。',
     suggestedDuration: '2至3.5小时', bestViewingTime: '上午至下午侧光', suitableWeather: '晴朗、低风、天空通透。',
     walkingIntensity: '轻松至中等', physicalNotes: ['栈道和湖区点位分散', '无遮阴且紫外线强', '低风时步行体验更好'],
@@ -259,6 +363,14 @@ export const places: Place[] = [
     id: 'chaka-salt-lake', slug: 'chaka-salt-lake', name: '茶卡盐湖', region: '青海 · 海西', category: '湖泊盐湖', routeOrder: 15,
     coordinates: [99.0778, 36.6939], weatherCoordinates: [99.0778, 36.6939],
     summary: '“天空之镜”不是每天都会出现，但盐湖的轨道、白色地平线和风云变化仍然值得认真看。',
+    value: {
+      reasonToVisit: '茶卡盐湖以开阔、平直的白色地平线见长，低风时水面能把云层和人物完整接住。即便没有理想倒影，盐轨、盐壳与远山仍能解释这里作为老盐场的空间性格。',
+      uniqueness: '它的辨识度来自大尺度水平线和镜面条件，而不是多色盐池。',
+      bestFor: ['天空倒影', '盐湖', '六人合影'],
+      priority: 'recommended', priorityLabel: '强烈建议',
+      ifTimeIsLimited: '低风、能见度好时保留；大风阴雨时可缩短，或把更完整的时间留给青海湖。',
+      contrastWithNearby: '相比大柴旦的多色盐池，茶卡更简洁、更依赖风况，也更适合完整人物倒影。',
+    },
     recommendation: 4, worthDetour: '天气合适时值得专程；大风阴雨时可从容调整。',
     suggestedDuration: '2.5至4小时', bestViewingTime: '清晨低风或傍晚', suitableWeather: '低风、少云或云层有层次、近期无强降雨。',
     walkingIntensity: '中等', physicalNotes: ['景区纵深较长', '可结合景交或小火车减少重复步行', '盐面反光强'],
@@ -277,6 +389,14 @@ export const places: Place[] = [
     id: 'qinghai-lake', slug: 'qinghai-lake', name: '青海湖', region: '青海 · 海北 / 海南', category: '湖泊盐湖', routeOrder: 16,
     coordinates: [100.1953, 36.8721], weatherCoordinates: [100.1953, 36.8721],
     summary: '它不是一个单点，而是一整段不断变化的湖岸：草原、花田、远山和蓝色水面会轮流成为主角。',
+    value: {
+      reasonToVisit: '青海湖的价值不在某一处观景台，而在湖岸长距离展开时，草原、湿地、远山、村庄与蓝色水面不断交换前后景。它既是高原生态系统，也是整条西行路线最自然的收束。',
+      uniqueness: '这是全程尺度最大的湖泊景观，体验来自沿岸变化，而不是一张固定角度的照片。',
+      bestFor: ['高原湖泊', '草原', '路线收束'],
+      priority: 'core', priorityLabel: '核心必看',
+      ifTimeIsLimited: '建议保留一段代表性湖岸，不必追遍所有入口；根据天气选择最清晰的一侧即可。',
+      contrastWithNearby: '茶卡以盐地与倒影为主，青海湖呈现的是水体、草原与高原生态的连续变化。',
+    },
     recommendation: 5, worthDetour: '值得专程，也适合作为环线最后的情绪收束。',
     suggestedDuration: '半天至一天', bestViewingTime: '清晨、傍晚及雨后放晴', suitableWeather: '能见度好、有云层变化、风力适中。',
     walkingIntensity: '轻松至中等', physicalNotes: ['不同湖岸点位间以车行为主', '湖边风感与温差明显', '部分区域步道距离较长'],
@@ -305,9 +425,25 @@ export const placeCategories = [
   '沿途彩蛋',
 ] as const
 
-export function filterPlaces(source: Place[], category: string | null | undefined): Place[] {
-  if (!category || category === 'all' || !placeCategories.includes(category as (typeof placeCategories)[number])) {
-    return source
-  }
-  return source.filter((item) => item.category === category)
+export const placePriorityOptions: ReadonlyArray<{ value: PlacePriority; label: string }> = [
+  { value: 'core', label: '核心必看' },
+  { value: 'recommended', label: '强烈建议' },
+  { value: 'along-the-way', label: '顺路值得' },
+  { value: 'interest', label: '兴趣向选择' },
+  { value: 'optional', label: '时间紧可舍弃' },
+]
+
+export function filterPlaces(
+  source: Place[],
+  category: string | null | undefined,
+  priority: string | null | undefined = 'all',
+): Place[] {
+  const validCategory = Boolean(category && category !== 'all' && placeCategories.includes(category as (typeof placeCategories)[number]))
+  const validPriority = Boolean(priority && priority !== 'all' && placePriorityOptions.some((option) => option.value === priority))
+
+  return source.filter((item) => {
+    const matchesCategory = !validCategory || item.category === category
+    const matchesPriority = !validPriority || item.value.priority === priority
+    return matchesCategory && matchesPriority
+  })
 }

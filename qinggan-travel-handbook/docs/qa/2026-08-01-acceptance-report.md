@@ -16,7 +16,7 @@
 - 内容、服务、状态、组件和页面分层清晰。
 - 中国轮廓为本地 GeoJSON；核心页面不依赖地图服务启动。
 - `npm run type-check`：通过。
-- `npm run test:run`：13 个测试文件、32 项测试全部通过。
+- `npm run test:run`：14 个测试文件、41 项测试全部通过。
 - `npm run build`：通过，生产资源输出到 `dist/`。
 - `npm audit --omit=dev`：生产依赖 0 个已知漏洞。
 
@@ -30,6 +30,7 @@
 - 地图无 Key 时自动显示本地图文路线；16 个编号点位可打开正确地点卡片。
 - 西宁“未去”切换为“已去过”后刷新仍保留，足迹页同步显示 `1 / 16`。
 - 地点分类切换到“湖泊盐湖”后，URL 保存 `category` 参数，并只显示 3 处地点。
+- 推荐等级切换到“核心必看”后，URL 保存 `priority=core`，只显示 7 处对应地点；与类别筛选可取交集。
 - 西宁天气成功返回当前天气与四日预报；刷新后显示“六小时内的本地缓存”。
 - Home、Map、Places、PlaceDetail、PhotoGuide、Highlights、Footprints、Preparation、Intro 均可直接访问。
 - 浏览器控制台错误与警告：0。
@@ -47,6 +48,8 @@
 结果：通过。
 
 - 16 个地点均由 `src/data/places.ts` 结构化渲染，必填字段、坐标、id 与 slug 由测试校验。
+- 16 个地点均具有 `PlaceValue`：50 至 100 字的停留理由、独特性、适合标签、五档推荐等级与时间紧时的取舍建议；五档均有真实地点分布。
+- 游览价值文案扫描未发现“景色优美、值得打卡、不容错过、令人流连忘返、网红必去”等空泛营销措辞。
 - 6 组顺路组合、8 类摄影指南、7 项沿途彩蛋与 8 项准备复核内容完整。
 - 18 张用户提供的拍照姿势图已筛选并以稳定文件名打包；页面另有结构化动作、镜头与穿搭配色补充。
 - 16 个地点均配有独立的本地风景图，地点列表、详情页与地图卡片共用结构化图片字段；文件存在性、唯一性和替代文本由测试校验。
@@ -71,6 +74,10 @@
 - 新增风景图在 820px 展开屏和 390px 普通手机实拍通过，详情主图读取到 1024×576 原图，控制台错误为 0。
 - 出发前确认中心在 390px、820px、1440px 分别呈现一列、两列、三列；三个尺寸均满足 `scrollWidth <= clientWidth`。
 - 移动端紧急按钮与底部导航保留 8px 间隔；紧急抽屉实际渲染 12 个 `tel:` 链接，微信复制在浏览器显示“已复制”，控制台错误与警告为 0。
+- 首页路线价值模块在 820px 为三篇章卡，在 1440px 为“路线说明 + 三篇章”宽幅杂志布局；两种尺寸均无横向溢出。
+- 地图底部卡片在 390px 先显示停留理由、推荐等级、停留时间与操作，再显示辅助图片；卡片关键操作在首屏可见。
+- 地点列表在 390px 为单栏、820px 为双栏；两组横向筛选保留触摸滚动且隐藏视觉滚动条。
+- 地点详情价值总览在 390px 为单栏、820px 为 12 栏拼版，五项判断顺序与数据一致，已去按钮保留在页面末尾。
 
 关键截图：
 
@@ -89,6 +96,11 @@
 - `screenshots/preparation-center-820.png`
 - `screenshots/preparation-center-detail-820.png`
 - `screenshots/preparation-center-1440.png`
+- `screenshots/home-value-820.png`
+- `screenshots/home-value-1440.png`
+- `screenshots/map-value-sheet-390.png`
+- `screenshots/places-priority-820.png`
+- `screenshots/place-value-detail-820.png`
 
 ## 第五关：发布
 
@@ -98,16 +110,16 @@
 - README 已说明启动、地图 Key、天气、内容修改、静态部署与 localStorage。
 - SPA 的未知路径需要回退到 `index.html`，README 提供 Nginx、Netlify 等配置提示。
 - 生产构建通过；构建产物不依赖后台服务。
-- 正式目录此前已从无 `node_modules`、无旧 `dist` 的状态执行全新 `npm install`；本次增量修改后再次通过类型检查、32 项测试与生产构建，未增加依赖。
+- 正式目录此前已从无 `node_modules`、无旧 `dist` 的状态执行全新 `npm install`；本次增量修改后再次通过类型检查、41 项测试与生产构建，未增加依赖。
 
 ## 截图索引
 
 | 页面 | 390px | 820px | 1440px |
 | --- | --- | --- | --- |
-| 首页 | `home-390.png` | `home-820.png` | `home-1440.png` |
-| 本地路线 | `map-fallback-390.png` | `map-fallback-820.png` | `map-fallback-1440.png` |
-| 地点列表 | `places-scenic-390.png` | `places-scenic-820.png` | — |
-| 地点详情 | `place-detail-390.png` | `place-detail-weather-820.png`、`place-scenic-detail-820.png` | — |
+| 首页 | `home-390.png` | `home-820.png`、`home-value-820.png` | `home-1440.png`、`home-value-1440.png` |
+| 本地路线 | `map-fallback-390.png`、`map-value-sheet-390.png` | `map-fallback-820.png` | `map-fallback-1440.png` |
+| 地点列表 | `places-scenic-390.png` | `places-scenic-820.png`、`places-priority-820.png` | — |
+| 地点详情 | `place-detail-390.png` | `place-detail-weather-820.png`、`place-scenic-detail-820.png`、`place-value-detail-820.png` | — |
 | 拍照宝典 | `photo-guide-390.png` | — | `photo-guide-1440.png` |
 | 出发前确认中心 | `preparation-center-390.png`、`preparation-emergency-390.png` | `preparation-center-820.png`、`preparation-center-detail-820.png` | `preparation-center-1440.png` |
 | 旅行序章 | — | `intro-820.png`、`intro-final-820.png` | — |

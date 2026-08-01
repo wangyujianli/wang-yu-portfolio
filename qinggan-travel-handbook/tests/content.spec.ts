@@ -28,6 +28,29 @@ describe('travel handbook content', () => {
     }
   })
 
+  it('gives every place a concrete visit-value judgment', () => {
+    const labels = {
+      core: '核心必看',
+      recommended: '强烈建议',
+      'along-the-way': '顺路值得',
+      interest: '兴趣向选择',
+      optional: '时间紧可舍弃',
+    } as const
+    const vagueMarketing = /景色优美|值得打卡|不容错过|令人流连忘返|网红必去/
+
+    for (const place of places) {
+      expect(place.value.reasonToVisit.length).toBeGreaterThanOrEqual(50)
+      expect(place.value.reasonToVisit.length).toBeLessThanOrEqual(100)
+      expect(place.value.uniqueness.length).toBeGreaterThan(8)
+      expect(place.value.bestFor.length).toBeGreaterThan(0)
+      expect(place.value.ifTimeIsLimited.length).toBeGreaterThan(8)
+      expect(place.value.priorityLabel).toBe(labels[place.value.priority])
+      expect(JSON.stringify(place.value)).not.toMatch(vagueMarketing)
+    }
+
+    expect(new Set(places.map((place) => place.value.priority))).toEqual(new Set(Object.keys(labels)))
+  })
+
   it('keeps route and combination references valid', () => {
     const ids = new Set(places.map((place) => place.id))
     expect(routeStops.at(0)?.name).toBe('杭州')
