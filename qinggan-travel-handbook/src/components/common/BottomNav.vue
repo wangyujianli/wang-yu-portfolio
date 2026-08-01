@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { Camera, Compass, Footprints, House, Map } from '@lucide/vue'
+import { Camera, Compass, Footprints, House, ListChecks, Map } from '@lucide/vue'
 
 const navItems = [
   { to: '/', label: '首页', icon: House },
+  { to: '/preparation', label: '准备', icon: ListChecks },
   { to: '/map', label: '地图', icon: Map },
   { to: '/places', label: '地点', icon: Compass },
   { to: '/photo-guide', label: '拍照', icon: Camera },
@@ -28,7 +29,7 @@ const navItems = [
   bottom: max(10px, env(safe-area-inset-bottom));
   left: 10px;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   padding: 6px;
   border: 1px solid rgb(53 42 36 / 12%);
   border-radius: 22px;
@@ -46,7 +47,7 @@ const navItems = [
   gap: 2px;
   border-radius: 17px;
   color: var(--muted);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   text-decoration: none;
 }
 
