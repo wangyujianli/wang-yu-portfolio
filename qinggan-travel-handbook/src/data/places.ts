@@ -1,10 +1,132 @@
-import type { Place, PlacePriority } from '@/types/content'
+import { extendedPlaces } from '@/data/extendedPlaces'
+import { contentPriorityFor } from '@/data/placeContentPriorities'
+import { localFoodFor } from '@/data/localFood'
+import { souvenirsFor } from '@/data/souvenirs'
+import { photoCheckpointsFor } from '@/data/photoCheckpoints'
+import { ticketBookingFor } from '@/data/ticketBookings'
+import { viralStoriesByPlaceId } from '@/data/viralStories'
+import {
+  classificationFor,
+  placePriorityLabels,
+  placePriorityOptions,
+  routeScopeOptions,
+} from '@/data/placeClassifications'
+import type { ExperienceLevel, LegacyPlacePriority, Place, PlacePriority, TravelPlaceType } from '@/types/content'
 
-const place = (item: Place): Place => item
+type EnrichedPlaceFields = Pick<Place, 'classification' | 'bestSeason' | 'weatherSensitivity' | 'placeTypes' | 'routeIds' | 'experienceLevel' | 'seasonalActivities' | 'weatherAlternatives' | 'nearbyExplorationIds' | 'viralStories' | 'informationUpdatedAt' | 'lightNote' | 'ticketBooking' | 'contentPriority'>
+type PlaceInput = Omit<Place, keyof EnrichedPlaceFields> & Partial<EnrichedPlaceFields>
 
-export const places: Place[] = [
+const categoryTypes: Record<Place['category'], TravelPlaceType[]> = {
+  '文化遗址': ['古建'],
+  '湖泊盐湖': ['湖泊', '盐湖'],
+  '草原雪山': ['草原', '雪山'],
+  '沙漠雅丹': ['沙漠', '雅丹'],
+  '公路风景': ['公路'],
+  '沿途彩蛋': ['网红地点'],
+}
+
+const specificPlaceTypes: Record<string, TravelPlaceType[]> = {
+  xining: ['博物馆'],
+  'kumbum-monastery': ['古建'],
+  'menyuan-gangshika': ['草原', '雪山'],
+  biandukou: ['草原', '雪山'],
+  'zhangye-danxia': ['雅丹'],
+  'jiayuguan-pass': ['古建'],
+  'son-of-earth': ['网红地点'],
+  boundless: ['网红地点'],
+  'mogao-grottoes': ['古建'],
+  'mingsha-crescent': ['沙漠'],
+  'boluo-zhuanjing': ['古建', '网红地点'],
+  'g315-u-road': ['公路'],
+  'wusute-yadan': ['雅丹', '湖泊'],
+  'dachaidan-emerald': ['盐湖'],
+  'chaka-salt-lake': ['盐湖'],
+  'qinghai-lake': ['湖泊'],
+}
+
+const priorityExperience: Record<LegacyPlacePriority, ExperienceLevel> = {
+  core: 'must-see',
+  recommended: 'half-day',
+  'along-the-way': 'along-the-way',
+  interest: 'add-one-day',
+  optional: 'along-the-way',
+}
+
+const lightNotes: Record<string, string> = {
+  xining: '先让人和行李都安顿好，西行的故事才算真正翻到第一页。',
+  'kumbum-monastery': '院落很多，不必比赛谁走得快，慢一点反而看得更多。',
+  'menyuan-gangshika': '花海负责热闹，雪峰负责把画面稳住。',
+  biandukou: '这是一段路自己变成风景的地方，停得短也能记得久。',
+  'zhangye-danxia': '山体已经配好了颜色，同行的人只需要把站位留松。',
+  'jiayuguan-pass': '城门很有气势，合影倒不必每个人都站得像守关。',
+  'son-of-earth': '雕塑很安静，戈壁的风会主动补上旁白。',
+  boundless: '它适合顺手看一眼，也适合给旅途留一点不解释的空间。',
+  'mogao-grottoes': '看得懂多少不必着急，先让眼睛适应那些经过千年的颜色。',
+  'mingsha-crescent': '沙山会把脚步放慢，刚好给傍晚多留一点时间。',
+  'boluo-zhuanjing': '旧街道没有剧情提示，反而更容易让人自己想象。',
+  'g315-u-road': '公路的起伏已经足够上镜，车里的人不用再抢戏。',
+  'wusute-yadan': '风把雅丹吹得很硬，水面却把整段旅程放柔了。',
+  'dachaidan-emerald': '每一池颜色都不太一样，没必要替它们排个高低。',
+  'chaka-salt-lake': '倒影出现时不用喊口号，大家站稳就是一张好照片。',
+  'qinghai-lake': '湖太大，少赶一个岸边点，反而更像真正看过它。',
+}
+
+const bestSeasons: Record<string, string> = {
+  xining: '5月至10月',
+  'kumbum-monastery': '4月至10月',
+  'menyuan-gangshika': '7月花期；雪峰视当年天气',
+  biandukou: '6月至9月',
+  'zhangye-danxia': '5月至10月',
+  'jiayuguan-pass': '5月至10月',
+  'son-of-earth': '4月至10月',
+  boundless: '4月至10月',
+  'mogao-grottoes': '全年；春秋体感更舒适',
+  'mingsha-crescent': '5至6月、9至10月',
+  'boluo-zhuanjing': '5月至10月',
+  'g315-u-road': '5月至10月',
+  'wusute-yadan': '5月至10月',
+  'dachaidan-emerald': '5月至10月',
+  'chaka-salt-lake': '6月至9月',
+  'qinghai-lake': '6月至9月',
+}
+
+function inferWeatherSensitivity(item: PlaceInput): Place['weatherSensitivity'] {
+  if (item.id === 'xining' || item.id === 'mogao-grottoes') return '低'
+  if (item.category === '文化遗址') return '中'
+  if (item.category === '公路风景' || item.category === '草原雪山') return '高'
+  return '高'
+}
+
+const place = (item: PlaceInput): Place => {
+  const classification = item.classification ?? classificationFor(item.id)
+  return {
+  ...item,
+  classification,
+  value: { ...item.value, priorityLabel: placePriorityLabels[classification.priority] },
+  contentPriority: item.contentPriority ?? contentPriorityFor(item.id),
+  ticketBooking: item.ticketBooking ?? ticketBookingFor(item.id),
+  bestSeason: item.bestSeason ?? bestSeasons[item.id] ?? '5月至10月',
+  weatherSensitivity: item.weatherSensitivity ?? inferWeatherSensitivity(item),
+  placeTypes: item.placeTypes ?? specificPlaceTypes[item.id] ?? categoryTypes[item.category],
+  routeIds: item.routeIds ?? ['classic'],
+  experienceLevel: item.experienceLevel ?? priorityExperience[item.value.priority],
+  seasonalActivities: item.seasonalActivities ?? [{ title: item.bestViewingTime, season: '随当季开放与天气变化', note: item.suitableWeather }],
+  weatherAlternatives: item.weatherAlternatives ?? {
+    rain: `雨势明显时可缩短户外停留，保留${item.name}的核心观赏段。`,
+    wind: `风力较大时优先选择有遮挡的观景位置，并按现场开放情况调整。`,
+    heat: '日照较强时把户外停留放在较舒适的时段，中段留给车程或室内内容。',
+  },
+  nearbyExplorationIds: item.nearbyExplorationIds ?? [],
+  viralStories: item.viralStories ?? [],
+  informationUpdatedAt: item.informationUpdatedAt ?? '2026-08-01',
+  lightNote: item.lightNote ?? lightNotes[item.id] ?? '留一点空白给现场，通常比把清单排满更有旅行感。',
+  }
+}
+
+const corePlaces: Place[] = [
   place({
     id: 'xining', slug: 'xining', name: '西宁', region: '青海 · 西宁', category: '文化遗址', routeOrder: 1,
+    accommodationHubId: 'xining',
     coordinates: [101.7782, 36.6171], weatherCoordinates: [101.7782, 36.6171],
     summary: '它不是匆匆取车的中转站，而是整条环线最适合慢慢把呼吸和节奏调到高原频道的开场。',
     value: {
@@ -30,6 +152,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'kumbum-monastery', slug: 'taer-temple', name: '塔尔寺', region: '青海 · 湟中', category: '文化遗址', routeOrder: 2,
+    accommodationHubId: 'xining',
     coordinates: [101.5714, 36.4829], weatherCoordinates: [101.5714, 36.4829],
     summary: '真正值得看的不只是建筑颜色，而是院落、转经路与日常礼佛共同形成的秩序感。',
     value: {
@@ -56,6 +179,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'menyuan-gangshika', slug: 'menyuan-gangshika', name: '门源油菜花与岗什卡雪峰', region: '青海 · 门源', category: '草原雪山', routeOrder: 3,
+    accommodationHubId: 'menyuan',
     coordinates: [101.6224, 37.3767], weatherCoordinates: [101.6224, 37.3767],
     summary: '花海只是前景，真正让画面成立的是祁连山、村落与雪峰一起撑起的辽阔尺度。',
     value: {
@@ -81,6 +205,12 @@ export const places: Place[] = [
   }),
   place({
     id: 'biandukou', slug: 'biandukou', name: '扁都口', region: '甘肃 · 民乐', category: '草原雪山', routeOrder: 4,
+    accommodationHubId: 'zhangye',
+    remoteStayAdvice: {
+      suggestedCity: '张掖市区或临泽丹霞片区',
+      travelText: '向北进入张掖方向，通常约1.5—2.5小时，随观景停留和路况变化',
+      reason: '扁都口更像翻越祁连山后的沿途风景带，住宿与夜间补给分散；继续到成熟节点，停车、餐饮和房间选择更稳定。',
+    },
     coordinates: [100.9972, 38.2121], weatherCoordinates: [100.9972, 38.2121],
     summary: '它像一页天然的转场：从青海高原穿过山口，河西走廊在前方慢慢打开。',
     value: {
@@ -106,6 +236,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'zhangye-danxia', slug: 'zhangye-danxia', name: '张掖七彩丹霞', region: '甘肃 · 张掖', category: '沙漠雅丹', routeOrder: 5,
+    accommodationHubId: 'zhangye',
     coordinates: [100.0612, 38.9707], weatherCoordinates: [100.0612, 38.9707],
     summary: '它的魅力不是“颜色越艳越好”，而是层层山体在侧光里显露出的纹理和尺度。',
     value: {
@@ -132,6 +263,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'jiayuguan-pass', slug: 'jiayuguan-pass', name: '嘉峪关关城', region: '甘肃 · 嘉峪关', category: '文化遗址', routeOrder: 6,
+    accommodationHubId: 'jiayuguan',
     coordinates: [98.2232, 39.8006], weatherCoordinates: [98.2232, 39.8006],
     summary: '城门、瓮城与远处祁连雪山共同构成的，才是“天下第一雄关”的完整气势。',
     value: {
@@ -157,6 +289,12 @@ export const places: Place[] = [
   }),
   place({
     id: 'son-of-earth', slug: 'son-of-earth', name: '瓜州大地之子', region: '甘肃 · 瓜州', category: '沿途彩蛋', routeOrder: 7,
+    accommodationHubId: 'dunhuang',
+    remoteStayAdvice: {
+      suggestedCity: '敦煌市区',
+      travelText: '沿连霍高速和柳格高速向西，通常约1.5—2小时到敦煌',
+      reason: '雕塑群是公路旁的短停节点，周边住宿选择少、晚间补给弱；到敦煌后更容易统一停车、用餐和连续入住。',
+    },
     coordinates: [95.9101, 40.5088], weatherCoordinates: [95.9101, 40.5088],
     summary: '巨大的婴孩伏在戈壁上，荒凉尺度和柔软姿态之间的反差，远比“合影打卡”更耐看。',
     value: {
@@ -182,6 +320,12 @@ export const places: Place[] = [
   }),
   place({
     id: 'boundless', slug: 'guazhou-boundless', name: '瓜州无界', region: '甘肃 · 瓜州', category: '沿途彩蛋', routeOrder: 8,
+    accommodationHubId: 'dunhuang',
+    remoteStayAdvice: {
+      suggestedCity: '敦煌市区',
+      travelText: '沿既定向西路线继续，通常约1.5—2小时到敦煌',
+      reason: '这里适合与大地之子一起短停，周边缺少成熟的夜间餐饮和住宿集群；把落脚点放在敦煌更从容。',
+    },
     coordinates: [95.8664, 40.5315], weatherCoordinates: [95.8664, 40.5315],
     summary: '一座镂空建筑把风、光与戈壁同时装进画面，越是简洁的构图越能显出它的轻盈。',
     value: {
@@ -208,6 +352,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'mogao-grottoes', slug: 'mogao-grottoes', name: '莫高窟', region: '甘肃 · 敦煌', category: '文化遗址', routeOrder: 9,
+    accommodationHubId: 'dunhuang',
     coordinates: [94.8129, 40.0419], weatherCoordinates: [94.8129, 40.0419],
     summary: '它最动人的地方不在“看了多少窟”，而在有限光线里忽然与千年前的颜色、线条和愿望相遇。',
     value: {
@@ -234,6 +379,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'mingsha-crescent', slug: 'mingsha-crescent-spring', name: '鸣沙山月牙泉', region: '甘肃 · 敦煌', category: '沙漠雅丹', routeOrder: 10,
+    accommodationHubId: 'dunhuang',
     coordinates: [94.6757, 40.0875], weatherCoordinates: [94.6757, 40.0875],
     summary: '沙山、泉水和暮色同框已经足够经典，真正舒服的玩法是给风与光一点时间。',
     value: {
@@ -259,6 +405,12 @@ export const places: Place[] = [
   }),
   place({
     id: 'boluo-zhuanjing', slug: 'boluo-zhuanjing', name: '博罗转井石油小镇', region: '甘肃 · 阿克塞', category: '沿途彩蛋', routeOrder: 11,
+    accommodationHubId: 'dunhuang',
+    remoteStayAdvice: {
+      suggestedCity: '敦煌市区',
+      travelText: '从阿克塞方向回到敦煌通常约1.5小时，具体以当天道路为准',
+      reason: '小镇更适合作为沿途取景点，周边服务规模有限；在敦煌完成补给和休息，住宿条件与后续调整余地更大。',
+    },
     coordinates: [94.3405, 39.6337], weatherCoordinates: [94.3405, 39.6337],
     summary: '旧建筑、空街与荒山构成天然片场感，适合拍一组不靠夸张动作也有故事的照片。',
     value: {
@@ -284,6 +436,12 @@ export const places: Place[] = [
   }),
   place({
     id: 'g315-u-road', slug: 'g315-u-road', name: 'G315 U形公路', region: '青海 · 柴达木', category: '公路风景', routeOrder: 12,
+    accommodationHubId: 'water-yadan',
+    remoteStayAdvice: {
+      suggestedCity: '乌素特水上雅丹住宿节点',
+      travelText: '沿G315向西进入水上雅丹方向，常见车程约2—3小时，受具体拍摄点与路况影响',
+      reason: '公路观景点本身没有成熟住宿，补给间距也长；落脚到景区住宿节点，至少能把停车、餐饮和夜间休息放在同一处确认。',
+    },
     coordinates: [95.129, 37.394], weatherCoordinates: [95.129, 37.394],
     summary: '真正好看的不是某一个数字路碑，而是公路在荒原上起伏、消失又出现的纵深感。',
     value: {
@@ -309,6 +467,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'wusute-yadan', slug: 'wusute-water-yadan', name: '乌素特水上雅丹', region: '青海 · 海西', category: '沙漠雅丹', routeOrder: 13,
+    accommodationHubId: 'water-yadan',
     coordinates: [93.1936, 37.2753], weatherCoordinates: [93.1936, 37.2753],
     summary: '雅丹本来属于荒漠，水面却把它们变成漂浮的岛屿，这种不合常理的组合最有吸引力。',
     value: {
@@ -335,6 +494,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'dachaidan-emerald', slug: 'dachaidan-emerald-lake', name: '大柴旦翡翠湖', region: '青海 · 海西', category: '湖泊盐湖', routeOrder: 14,
+    accommodationHubId: 'dachaidan',
     coordinates: [95.1516, 37.8436], weatherCoordinates: [95.1516, 37.8436],
     summary: '它不是一整片统一的绿色，而是一格一格矿物浓度不同的湖面，在高处看尤其像调色盘。',
     value: {
@@ -361,6 +521,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'chaka-salt-lake', slug: 'chaka-salt-lake', name: '茶卡盐湖', region: '青海 · 海西', category: '湖泊盐湖', routeOrder: 15,
+    accommodationHubId: 'chaka',
     coordinates: [99.0778, 36.6939], weatherCoordinates: [99.0778, 36.6939],
     summary: '“天空之镜”不是每天都会出现，但盐湖的轨道、白色地平线和风云变化仍然值得认真看。',
     value: {
@@ -387,6 +548,7 @@ export const places: Place[] = [
   }),
   place({
     id: 'qinghai-lake', slug: 'qinghai-lake', name: '青海湖', region: '青海 · 海北 / 海南', category: '湖泊盐湖', routeOrder: 16,
+    accommodationHubId: 'qinghai-lake',
     coordinates: [100.1953, 36.8721], weatherCoordinates: [100.1953, 36.8721],
     summary: '它不是一个单点，而是一整段不断变化的湖岸：草原、花田、远山和蓝色水面会轮流成为主角。',
     value: {
@@ -413,8 +575,19 @@ export const places: Place[] = [
   }),
 ]
 
+export const places: Place[] = [...corePlaces, ...extendedPlaces].map((item) => ({
+  ...item,
+  value: { ...item.value, priorityLabel: placePriorityLabels[item.classification.priority] },
+  contentPriority: contentPriorityFor(item.id),
+  localFood: localFoodFor(item.id),
+  souvenirs: souvenirsFor(item.id),
+  photoCheckpoints: photoCheckpointsFor(item.id),
+  viralStories: [...(viralStoriesByPlaceId[item.id] ?? item.viralStories)],
+}))
+
 export const placeById = new Map(places.map((item) => [item.id, item]))
 export const placeBySlug = new Map(places.map((item) => [item.slug, item]))
+export const standalonePlaces = places.filter((item) => item.classification.isStandalone)
 
 export const placeCategories = [
   '文化遗址',
@@ -425,25 +598,33 @@ export const placeCategories = [
   '沿途彩蛋',
 ] as const
 
-export const placePriorityOptions: ReadonlyArray<{ value: PlacePriority; label: string }> = [
-  { value: 'core', label: '核心必看' },
-  { value: 'recommended', label: '强烈建议' },
-  { value: 'along-the-way', label: '顺路值得' },
-  { value: 'interest', label: '兴趣向选择' },
-  { value: 'optional', label: '时间紧可舍弃' },
-]
+export { placePriorityOptions, routeScopeOptions }
+
+export const placeClassificationStats = routeScopeOptions.map(({ value: routeScope, label }) => {
+  const scopePlaces = standalonePlaces.filter((item) => item.classification.routeScope === routeScope)
+  const counts = Object.fromEntries(placePriorityOptions.map(({ value }) => [
+    value,
+    scopePlaces.filter((item) => item.classification.priority === value).length,
+  ])) as Record<PlacePriority, number>
+  const childCount = places.filter((item) => !item.classification.isStandalone && item.classification.routeScope === routeScope).length
+  return { routeScope, label, total: scopePlaces.length, counts, childCount }
+})
+
 
 export function filterPlaces(
   source: Place[],
   category: string | null | undefined,
   priority: string | null | undefined = 'all',
+  routeScope: string | null | undefined = 'all',
 ): Place[] {
   const validCategory = Boolean(category && category !== 'all' && placeCategories.includes(category as (typeof placeCategories)[number]))
   const validPriority = Boolean(priority && priority !== 'all' && placePriorityOptions.some((option) => option.value === priority))
+  const validRouteScope = Boolean(routeScope && routeScope !== 'all' && routeScopeOptions.some((option) => option.value === routeScope))
 
   return source.filter((item) => {
     const matchesCategory = !validCategory || item.category === category
-    const matchesPriority = !validPriority || item.value.priority === priority
-    return matchesCategory && matchesPriority
+    const matchesPriority = !validPriority || item.classification.priority === priority
+    const matchesRouteScope = !validRouteScope || item.classification.routeScope === routeScope
+    return item.classification.isStandalone && matchesCategory && matchesPriority && matchesRouteScope
   })
 }

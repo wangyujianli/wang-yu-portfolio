@@ -1,15 +1,14 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { ArrowUpRight, X } from '@lucide/vue'
 import VisitedToggle from '@/components/common/VisitedToggle.vue'
 import type { Place } from '@/types/content'
+import { scenicImagesFor } from '@/data/scenicImages'
+import { publicAssetUrl } from '@/lib/publicAssets'
 
-defineProps<{ place: Place }>()
+const props = defineProps<{ place: Place }>()
 defineEmits<{ close: [] }>()
-
-function hideBrokenImage(event: Event): void {
-  const image = event.currentTarget
-  if (image instanceof HTMLImageElement) image.hidden = true
-}
+const scenic = computed(() => scenicImagesFor(props.place.id)[0])
 </script>
 
 <template>
@@ -30,12 +29,12 @@ function hideBrokenImage(event: Event): void {
       <VisitedToggle :place-id="place.id" compact />
     </div>
     <img
+      v-if="scenic"
       class="map-place-sheet__image"
-      :src="place.image"
-      :alt="place.imageAlt"
+      :src="publicAssetUrl(scenic.thumbnail)"
+      :alt="scenic.alt"
       loading="lazy"
       decoding="async"
-      @error="hideBrokenImage"
     />
   </article>
 </template>

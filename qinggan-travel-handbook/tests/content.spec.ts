@@ -5,19 +5,22 @@ import { photoGuides, photoPlaceExamples } from '@/data/photoGuides'
 import { places } from '@/data/places'
 import { preparationCards } from '@/data/preparation'
 import { routeStops } from '@/data/route'
+import { accommodationHubs } from '@/data/accommodationHubs'
 
 describe('travel handbook content', () => {
-  it('contains 16 unique and complete places', () => {
-    expect(places).toHaveLength(16)
-    expect(new Set(places.map((place) => place.id)).size).toBe(16)
-    expect(new Set(places.map((place) => place.slug)).size).toBe(16)
+  it('contains 30 unique and complete places', () => {
+    expect(places).toHaveLength(30)
+    expect(new Set(places.map((place) => place.id)).size).toBe(30)
+    expect(new Set(places.map((place) => place.slug)).size).toBe(30)
 
     for (const place of places) {
       expect(place.name.length).toBeGreaterThan(1)
       expect(place.summary.length).toBeGreaterThan(8)
-      expect(place.image).toMatch(/^\/images\/places\/[a-z0-9-]+\.(jpg|png)$/)
+      if (place.image) expect(place.image).toMatch(/^\/(images\/places\/[a-z0-9-]+\.(jpg|png)|assets\/scenic\/[a-z0-9-]+-1600\.webp)$/)
       expect(place.imageAlt.length).toBeGreaterThan(6)
       expect(place.conventionalPlay.length).toBeGreaterThan(0)
+      expect(place.bestSeason.length).toBeGreaterThan(1)
+      expect(['低', '中', '高', '很高']).toContain(place.weatherSensitivity)
       expect(place.unconventionalPlay.length).toBeGreaterThan(0)
       expect(place.soloPoses).toHaveLength(3)
       expect(place.groupComposition.length).toBeGreaterThan(8)
@@ -31,10 +34,10 @@ describe('travel handbook content', () => {
   it('gives every place a concrete visit-value judgment', () => {
     const labels = {
       core: '核心必看',
-      recommended: '强烈建议',
-      'along-the-way': '顺路值得',
-      interest: '兴趣向选择',
-      optional: '时间紧可舍弃',
+      priority: '优先安排',
+      'en-route': '顺路可看',
+      interest: '兴趣加选',
+      optional: '时间紧可略',
     } as const
     const vagueMarketing = /景色优美|值得打卡|不容错过|令人流连忘返|网红必去/
 
@@ -44,11 +47,11 @@ describe('travel handbook content', () => {
       expect(place.value.uniqueness.length).toBeGreaterThan(8)
       expect(place.value.bestFor.length).toBeGreaterThan(0)
       expect(place.value.ifTimeIsLimited.length).toBeGreaterThan(8)
-      expect(place.value.priorityLabel).toBe(labels[place.value.priority])
+      expect(place.value.priorityLabel).toBe(labels[place.classification.priority])
       expect(JSON.stringify(place.value)).not.toMatch(vagueMarketing)
     }
 
-    expect(new Set(places.map((place) => place.value.priority))).toEqual(new Set(Object.keys(labels)))
+    expect(new Set(places.map((place) => place.classification.priority))).toEqual(new Set(Object.keys(labels)))
   })
 
   it('keeps route and combination references valid', () => {
@@ -68,8 +71,16 @@ describe('travel handbook content', () => {
     expect(photoGuides.every((guide) => guide.soloPoses.length === 3)).toBe(true)
   })
 
+  it('attaches traceable viral stories only where there is useful context', () => {
+    const stories = places.flatMap((place) => place.viralStories)
+    expect(stories.length).toBeGreaterThanOrEqual(7)
+    expect(stories.every((story) => story.sourceLabel.length > 6)).toBe(true)
+    expect(stories.every((story) => ['A', 'B', 'C'].includes(story.confidence))).toBe(true)
+    expect(places.find((place) => place.id === 'hoh-xil')?.viralStories[0]?.sourceLabel).toContain('原始出处暂未可靠核实')
+  })
+
   it('does not expose internal persona labels or fixed-day schedules', () => {
-    const serialized = JSON.stringify({ places, highlights, photoGuides, routeCombinations, preparationCards })
+    const serialized = JSON.stringify({ places, highlights, photoGuides, routeCombinations, preparationCards, accommodationHubs })
     expect(serialized).not.toMatch(/50.?60|中老年|适老|长辈|领导专属|Day\s*[1-9]/i)
   })
 })

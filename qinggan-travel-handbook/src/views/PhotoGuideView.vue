@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Aperture, Camera, Check, Palette, Users } from '@lucide/vue'
+import { Camera } from '@lucide/vue'
 import SectionHeading from '@/components/common/SectionHeading.vue'
+import PhotoAdviceSpread from '@/components/photo/PhotoAdviceSpread.vue'
 import { photoGuides, photoMinimumFormula, photoPlaceExamples } from '@/data/photoGuides'
+import { publicAssetUrl } from '@/lib/publicAssets'
 </script>
 
 <template>
@@ -12,7 +14,7 @@ import { photoGuides, photoMinimumFormula, photoPlaceExamples } from '@/data/pho
         <p class="photo-guide__notice">动作与机位均为构图示意，实际拍摄以现场条件为准。</p>
       </div>
       <figure class="photo-hero__cover">
-        <img src="/images/photo-guide/cover.png" alt="青甘大环线拍照姿势图包封面" />
+        <img :src="publicAssetUrl('/images/photo-guide/cover.png')" alt="青甘大环线拍照姿势图包封面" />
       </figure>
     </section>
 
@@ -25,41 +27,33 @@ import { photoGuides, photoMinimumFormula, photoPlaceExamples } from '@/data/pho
         </ol>
         <p>这三样能在回看时组成一个完整段落：有环境、有行走，也有六个人都在场的证据。</p>
       </div>
-      <figure><img src="/images/photo-guide/six-person.png" alt="六人合影通用构图示意" /></figure>
+      <figure><img :src="publicAssetUrl('/images/photo-guide/six-person.png')" alt="六人合影通用构图示意" /></figure>
     </section>
 
     <section class="scene-guides">
       <header><p class="eyebrow">8 SCENE NOTES</p><h2>八种风景，八套画面语言</h2></header>
-      <article v-for="(guide, index) in photoGuides" :key="guide.id" class="scene-guide" :class="{ 'scene-guide--reverse': index % 2 === 1 }">
-        <figure><img :src="guide.overviewImage" :alt="`${guide.name}拍照构图总览`" loading="lazy" /></figure>
-        <div class="scene-guide__body">
-          <p class="eyebrow">{{ String(index + 1).padStart(2, '0') }} · {{ guide.name }}</p>
-          <h3>{{ guide.kicker }}</h3>
-          <div class="scene-guide__facts">
-            <p><Aperture :size="18" /><span><b>推荐机位</b>{{ guide.vantage }}</span></p>
-            <p><Camera :size="18" /><span><b>镜头倍率</b>{{ guide.lens }}</span></p>
-          </div>
-          <div class="scene-guide__poses">
-            <span v-for="pose in guide.soloPoses" :key="pose"><Check :size="16" />{{ pose }}</span>
-          </div>
-          <div class="scene-guide__group"><Users :size="21" /><p><b>六人构图</b>{{ guide.groupComposition }}</p></div>
-          <div class="scene-guide__outfit">
-            <Palette :size="20" />
-            <p><b>{{ guide.outfit.mainColors.join(' · ') }}，点缀 {{ guide.outfit.accentColor }}</b>{{ guide.outfit.note }}</p>
-          </div>
-          <details>
-            <summary>画面校对</summary>
-            <ul><li v-for="item in guide.commonMistakes" :key="item">{{ item }}</li></ul>
-          </details>
-        </div>
-      </article>
+      <PhotoAdviceSpread
+        v-for="(guide, index) in photoGuides"
+        :key="guide.id"
+        :chapter="`${String(index + 1).padStart(2, '0')} · ${guide.name}`"
+        :title="guide.kicker"
+        :intro="`${guide.name}有自己的空间尺度，先确定机位与人物关系，再选择动作。`"
+        :image="guide.overviewImage"
+        :image-alt="`${guide.name}拍照构图总览`"
+        :vantage="guide.vantage"
+        :lens="guide.lens"
+        :poses="guide.soloPoses"
+        :group-composition="guide.groupComposition"
+        :common-mistakes="guide.commonMistakes"
+        :outfit="guide.outfit"
+      />
     </section>
 
     <section class="place-examples">
       <header><p class="eyebrow">LOCATION POSE CARDS</p><h2>十二处地点，动作尽量不重复</h2><p>这些图保留为最直观的动作参考；镜头倍率与穿衣颜色由手册正文补齐。</p></header>
       <div class="place-examples__grid">
         <article v-for="example in photoPlaceExamples" :key="example.name">
-          <img :src="example.image" :alt="`${example.name}拍照动作示意`" loading="lazy" />
+          <img :src="publicAssetUrl(example.image)" :alt="`${example.name}拍照动作示意`" loading="lazy" />
           <div><h3>{{ example.name }}</h3><p>{{ example.note }}</p><small>{{ example.colors }}</small></div>
         </article>
       </div>
@@ -84,22 +78,8 @@ import { photoGuides, photoMinimumFormula, photoPlaceExamples } from '@/data/pho
 .minimum-formula figure { grid-column: 1 / -1; margin: 0; overflow: hidden; border-radius: 20px; }
 
 .scene-guides > header, .place-examples > header { max-width: 820px; margin-bottom: 30px; }
-.scene-guide { display: grid; gap: 22px; margin-bottom: 42px; padding-bottom: 42px; border-bottom: 1px solid var(--line); }
-.scene-guide figure { margin: 0; overflow: hidden; border-radius: 26px; background: #ded5c6; }
-.scene-guide figure img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
-.scene-guide__body { align-self: center; }
-.scene-guide h3 { font-size: clamp(2rem, 4vw, 3.2rem); }
-.scene-guide__facts { display: grid; gap: 12px; margin: 20px 0; }
-.scene-guide__facts > p, .scene-guide__group, .scene-guide__outfit { display: flex; align-items: flex-start; gap: 10px; }
-.scene-guide__facts p { margin: 0; color: var(--muted); }
-.scene-guide__facts b, .scene-guide__group b, .scene-guide__outfit b { display: block; margin-bottom: 4px; color: var(--ink); }
-.scene-guide__poses { display: grid; gap: 8px; }
-.scene-guide__poses span { display: flex; align-items: start; gap: 8px; padding: 10px 12px; border-radius: 12px; background: rgb(255 255 255 / 36%); font-size: 0.84rem; }
-.scene-guide__group, .scene-guide__outfit { margin-top: 14px; padding: 16px; border-radius: 16px; background: rgb(45 127 123 / 9%); }
-.scene-guide__outfit { background: rgb(217 109 59 / 9%); }
-.scene-guide__group p, .scene-guide__outfit p { margin: 0; color: var(--muted); }
-.scene-guide details { margin-top: 14px; padding: 12px 15px; border-top: 1px solid var(--line); color: var(--muted); }
-.scene-guide summary { min-height: 38px; cursor: pointer; color: var(--ink); font-weight: 700; }
+.scene-guides { display: grid; gap: 34px; }
+.scene-guides > header { margin-bottom: 0; }
 
 .place-examples { margin-top: 70px; }
 .place-examples > header > p:last-child { color: var(--muted); }
@@ -118,10 +98,6 @@ import { photoGuides, photoMinimumFormula, photoPlaceExamples } from '@/data/pho
   .minimum-formula { padding: 32px; }
   .minimum-formula__copy { grid-column: 1 / span 5; align-self: center; }
   .minimum-formula figure { grid-column: 6 / -1; }
-  .scene-guide { grid-template-columns: 1.1fr 0.9fr; gap: 38px; }
-  .scene-guide--reverse figure { grid-column: 2; }
-  .scene-guide--reverse .scene-guide__body { grid-column: 1; grid-row: 1; }
-  .scene-guide__poses { grid-template-columns: repeat(3, 1fr); }
   .place-examples__grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
 }
 

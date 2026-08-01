@@ -11,7 +11,7 @@ const scenicContacts = computed(() => props.contacts.filter((contact) => contact
 </script>
 
 <template>
-  <button type="button" class="emergency-trigger" data-emergency-trigger @click="open = true">
+  <button type="button" class="emergency-trigger" aria-label="打开紧急电话" title="紧急电话" data-emergency-trigger @click="open = true">
     <Siren :size="20" />
     紧急电话
   </button>
@@ -62,15 +62,18 @@ const scenicContacts = computed(() => props.contacts.filter((contact) => contact
   right: 18px;
   bottom: calc(max(10px, env(safe-area-inset-bottom)) + 74px);
   display: inline-flex;
-  min-height: 48px;
+  width: 52px;
+  min-height: 52px;
+  justify-content: center;
   align-items: center;
-  gap: 8px;
-  padding: 0 17px;
+  gap: 0;
+  padding: 0;
   border: 1px solid rgb(164 71 50 / 28%);
   border-radius: 999px;
   color: #fff;
   background: #a44732;
   box-shadow: 0 14px 34px rgb(88 40 28 / 28%);
+  font-size: 0;
   font-weight: 700;
   cursor: pointer;
 }

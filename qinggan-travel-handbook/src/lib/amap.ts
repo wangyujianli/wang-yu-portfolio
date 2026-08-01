@@ -2,7 +2,7 @@ import * as AMapLoader from '@amap/amap-jsapi-loader'
 
 export interface AMapInstance {
   add(overlays: unknown | unknown[]): void
-  setFitView(overlays?: unknown[]): void
+  setFitView(overlays?: unknown[], immediately?: boolean, avoid?: number[], maxZoom?: number): void
   destroy(): void
 }
 

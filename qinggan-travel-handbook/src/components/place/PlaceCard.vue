@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { ArrowUpRight, MapPin } from '@lucide/vue'
+import { computed } from 'vue'
+import { ArrowUpRight, MapPin, Star } from '@lucide/vue'
 import VisitedToggle from '@/components/common/VisitedToggle.vue'
 import type { Place } from '@/types/content'
+import { scenicImagesFor } from '@/data/scenicImages'
+import { placePriorityLabels, placeRoleLabelFor, routeScopeLabels } from '@/data/placeClassifications'
+import { publicAssetUrl } from '@/lib/publicAssets'
 
-withDefaults(defineProps<{ place: Place; featured?: boolean }>(), { featured: false })
+const props = withDefaults(defineProps<{ place: Place; featured?: boolean }>(), { featured: false })
+const coverImage = computed(() => scenicImagesFor(props.place.id)[0])
+const classificationLabels = computed(() => [
+  placePriorityLabels[props.place.classification.priority],
+  routeScopeLabels[props.place.classification.routeScope],
+  placeRoleLabelFor(props.place.id, props.place.classification.placeRole),
+])
 
 function hideBrokenImage(event: Event): void {
   const image = event.currentTarget
@@ -17,10 +27,28 @@ function hideBrokenImage(event: Event): void {
     :class="{ 'place-card--featured': featured }"
     :data-tone="place.visualTone"
     data-place-card
-    :data-priority="place.value.priority"
+    :data-place-id="place.id"
+    :data-priority="place.classification.priority"
+    :data-route-scope="place.classification.routeScope"
   >
     <div class="place-card__visual">
-      <img :src="place.image" :alt="place.imageAlt" loading="lazy" decoding="async" @error="hideBrokenImage" />
+      <img
+        v-if="coverImage || place.image"
+        :src="publicAssetUrl(coverImage?.regular || place.image || '')"
+        :srcset="coverImage ? `${publicAssetUrl(coverImage.thumbnail)} 480w, ${publicAssetUrl(coverImage.regular)} 960w, ${publicAssetUrl(coverImage.large)} 1600w` : undefined"
+        sizes="(min-width: 1180px) 42vw, (min-width: 720px) 50vw, 100vw"
+        :alt="coverImage?.alt || place.imageAlt"
+        loading="lazy"
+        decoding="async"
+        @error="hideBrokenImage"
+      />
+      <span
+        class="place-card__recommendation"
+        data-card-recommendation
+        :aria-label="`${place.recommendation} 星推荐`"
+      >
+        <Star :size="15" fill="currentColor" />{{ place.recommendation }}星推荐
+      </span>
       <span class="place-card__number">{{ String(place.routeOrder).padStart(2, '0') }}</span>
       <i></i><i></i><i></i>
     </div>
@@ -30,11 +58,10 @@ function hideBrokenImage(event: Event): void {
         <span class="place-card__region"><MapPin :size="14" />{{ place.region }}</span>
       </div>
       <h3>{{ place.name }}</h3>
-      <span class="place-card__priority" data-priority>{{ place.value.priorityLabel }}</span>
-      <p class="place-card__reason" data-card-reason>{{ place.value.reasonToVisit }}</p>
-      <div class="place-card__tags" aria-label="适合">
-        <span v-for="tag in place.value.bestFor.slice(0, 3)" :key="tag" data-best-for>{{ tag }}</span>
+      <div class="place-card__classifications" aria-label="本次分类">
+        <span v-for="label in classificationLabels" :key="label" data-classification-tag>{{ label }}</span>
       </div>
+      <p class="place-card__reason" data-card-reason>{{ place.value.reasonToVisit }}</p>
       <div class="place-card__footer">
         <RouterLink :to="`/places/${place.slug}`" class="place-card__link">
           展开这一页 <ArrowUpRight :size="18" />
@@ -175,14 +202,43 @@ function hideBrokenImage(event: Event): void {
   font-size: 1.55rem;
 }
 
-.place-card__priority {
-  align-self: flex-start;
-  padding: 5px 9px;
+.place-card__recommendation {
+  position: absolute;
+  z-index: 3;
+  bottom: 14px;
+  left: 16px;
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 11px;
+  border: 1px solid rgb(255 255 255 / 28%);
   border-radius: 999px;
-  color: var(--sunset);
-  background: rgb(217 109 59 / 10%);
-  font-size: 0.72rem;
+  color: #ffe09a;
+  background: rgb(45 36 31 / 76%);
+  backdrop-filter: blur(6px);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.place-card__classifications { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.place-card__classifications span {
+  padding: 5px 9px;
+  border: 1px solid color-mix(in srgb, var(--line) 86%, var(--lake));
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgb(240 229 209 / 62%);
+  font-size: 0.68rem;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.place-card__classifications span:first-child {
+  border-color: transparent;
+  color: #fff;
+  background: var(--ink);
 }
 
 .place-card__reason {
@@ -191,20 +247,6 @@ function hideBrokenImage(event: Event): void {
   color: var(--muted);
   font-size: 0.88rem;
   line-height: 1.72;
-}
-
-.place-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.place-card__tags span {
-  padding: 5px 9px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 0.68rem;
 }
 
 .place-card__footer {

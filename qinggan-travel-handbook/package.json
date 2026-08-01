@@ -7,6 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "npm run type-check && vite build",
     "images:import": "node scripts/import-scenic-images.mjs",
+    "images:verify": "node scripts/verify-scenic-images.mjs",
     "lint": "eslint . --max-warnings=0",
     "type-check": "vue-tsc --build",
     "test": "vitest",

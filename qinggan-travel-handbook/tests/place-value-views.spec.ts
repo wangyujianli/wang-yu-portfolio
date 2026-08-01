@@ -69,28 +69,28 @@ describe('place visit-value views', () => {
 
     expect(wrapper.get('[data-card-reason]').text()).toBe(place.value.reasonToVisit)
     expect(wrapper.get('[data-priority]').text()).toContain('核心必看')
-    expect(wrapper.findAll('[data-best-for]')).toHaveLength(3)
+    expect(wrapper.findAll('[data-classification-tag]')).toHaveLength(3)
     expect(wrapper.find('.visited-toggle').exists()).toBe(true)
   })
 
-  it('filters the list by recommendation while preserving category behavior', async () => {
+  it('filters the list by priority while preserving route query behavior', async () => {
     const router = makeRouter(PlacesView)
-    await router.push('/places?category=湖泊盐湖')
+    await router.push('/places?routeScope=main-route')
     await router.isReady()
     const wrapper = mount(PlacesView, { global: { plugins: [createPinia(), router] } })
 
-    await wrapper.get('[data-priority-filter="recommended"]').trigger('click')
+    await wrapper.get('[data-priority-filter="priority"]').trigger('click')
     await flushPromises()
 
-    expect(router.currentRoute.value.query.category).toBe('湖泊盐湖')
-    expect(router.currentRoute.value.query.priority).toBe('recommended')
-    expect(wrapper.findAll('[data-place-card]')).toHaveLength(2)
-    expect(wrapper.findAll('[data-place-card]').every((card) => card.attributes('data-priority') === 'recommended')).toBe(true)
+    expect(router.currentRoute.value.query.routeScope).toBe('main-route')
+    expect(router.currentRoute.value.query.priority).toBe('priority')
+    expect(wrapper.findAll('[data-place-card]')).toHaveLength(4)
+    expect(wrapper.findAll('[data-place-card]').every((card) => card.attributes('data-priority') === 'priority')).toBe(true)
   })
 
   it('orders the detail decision before play and leaves the visited action at the end', async () => {
     const router = makeRouter(PlaceDetailView)
-    await router.push('/places/taer-temple')
+    await router.push('/places/zhangye-danxia')
     await router.isReady()
     const wrapper = mount(PlaceDetailView, {
       global: {
@@ -99,10 +99,16 @@ describe('place visit-value views', () => {
       },
     })
 
+    expect(wrapper.find('[data-scenic-gallery]').exists()).toBe(true)
+    expect(wrapper.find('[data-photo-spread]').exists()).toBe(true)
     const headings = wrapper.findAll('[data-value-heading]').map((node) => node.text())
     expect(headings).toEqual(['为什么值得去', '这里最特别的是什么', '推荐等级', '适合谁', '时间紧时怎么选择'])
     expect(wrapper.get('[data-place-value]').element.compareDocumentPosition(wrapper.get('.place-sections').element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(wrapper.get('.place-sections').element.compareDocumentPosition(wrapper.get('[data-accommodation-section]').element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(wrapper.get('[data-accommodation-section]').element.compareDocumentPosition(wrapper.get('.combination-section').element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(wrapper.get('.combination-section').element.compareDocumentPosition(wrapper.get('.place-detail__footer').element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     expect(wrapper.find('.place-hero .visited-toggle').exists()).toBe(false)
     expect(wrapper.find('.place-detail__footer .visited-toggle').exists()).toBe(true)
   })
+
 })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CloudSun, Clock3, Footprints, Sparkles, Star, Sunrise } from '@lucide/vue'
+import { CalendarDays, CloudSun, Clock3, Footprints, Sparkles, Star, Sunrise, Wind } from '@lucide/vue'
 import type { Place } from '@/types/content'
 
 defineProps<{ place: Place }>()
@@ -14,8 +14,10 @@ defineProps<{ place: Place }>()
     <dl>
       <div><dt><Sparkles :size="18" />是否值得专程</dt><dd>{{ place.worthDetour }}</dd></div>
       <div><dt><Clock3 :size="18" />建议停留</dt><dd>{{ place.suggestedDuration }}</dd></div>
+      <div><dt><CalendarDays :size="18" />适合月份</dt><dd>{{ place.bestSeason }}</dd></div>
       <div><dt><Sunrise :size="18" />观赏时段</dt><dd>{{ place.bestViewingTime }}</dd></div>
       <div><dt><CloudSun :size="18" />适合天气</dt><dd>{{ place.suitableWeather }}</dd></div>
+      <div><dt><Wind :size="18" />天气敏感度</dt><dd>{{ place.weatherSensitivity }}</dd></div>
       <div><dt><Footprints :size="18" />步行感受</dt><dd>{{ place.walkingIntensity }}</dd></div>
     </dl>
   </aside>

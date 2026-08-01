@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">城市住宿环境示意</title><desc id="desc">暖色灯光、窗景与整洁床铺组成的旅行手账插画</desc>
+  <defs><linearGradient id="sky" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9abcca"/><stop offset="1" stop-color="#e7c38c"/></linearGradient><linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f4ebd9"/><stop offset="1" stop-color="#d7c3a5"/></linearGradient></defs>
+  <rect width="1200" height="720" fill="url(#wall)"/><rect x="95" y="82" width="440" height="310" rx="20" fill="#fcf7eb"/><rect x="125" y="112" width="380" height="250" rx="12" fill="url(#sky)"/>
+  <path d="M125 319l105-90 77 55 73-83 125 118v43H125z" fill="#486c70" opacity=".7"/><path d="M125 334l145-58 72 27 88-34 75 54v39H125z" fill="#795542" opacity=".7"/>
+  <rect x="390" y="360" width="690" height="245" rx="38" fill="#f7f0df" stroke="#a58264" stroke-width="8"/><rect x="455" y="418" width="215" height="96" rx="28" fill="#e2ad76"/><rect x="688" y="418" width="215" height="96" rx="28" fill="#94aaa5"/><path d="M420 531h630v74H420z" fill="#b76b4f" opacity=".84"/>
+  <circle cx="1020" cy="206" r="78" fill="#d88c58" opacity=".9"/><path d="M1020 288v112M956 400h128" stroke="#6b4a3b" stroke-width="12" stroke-linecap="round"/>
+  <text x="78" y="665" fill="#4b3b32" font-family="serif" font-size="34" letter-spacing="8">向西而行 · 住宿环境示意</text>
+</svg>

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Plane, SkipForward } from '@lucide/vue'
+import { BookOpenText, Camera, Compass, Plane, SkipForward, Ticket } from '@lucide/vue'
 import gsap from 'gsap'
 import { routeStops } from '@/data/route'
 import { useIntroStore } from '@/stores/intro'
 import type { Coordinates } from '@/types/content'
+import { publicAssetUrl } from '@/lib/publicAssets'
 
 interface GeoFeature {
   geometry: {
@@ -17,6 +18,9 @@ interface GeoFeature {
 const canvas = ref<HTMLCanvasElement>()
 const plane = ref<HTMLElement>()
 const root = ref<HTMLElement>()
+const hangzhouLabel = ref<HTMLElement>()
+const xiningLabel = ref<HTMLElement>()
+const departureStamp = ref<HTMLElement>()
 const introStore = useIntroStore()
 const route = useRoute()
 const router = useRouter()
@@ -26,6 +30,7 @@ let timeline: gsap.core.Timeline | undefined
 
 const hangzhou: Coordinates = [120.1551, 30.2741]
 const xining: Coordinates = [101.7782, 36.6171]
+const introIllustration = publicAssetUrl('/assets/illustrations/intro-travelers.png')
 const westRoute = routeStops.filter((stop) => stop.kind === 'route').map((stop) => stop.coordinates)
 
 function project([longitude, latitude]: readonly number[], width: number, height: number): [number, number] {
@@ -99,6 +104,10 @@ function drawScene(): void {
   context.arc(xx, xy, 4.5, 0, Math.PI * 2)
   context.fill()
 
+  if (hangzhouLabel.value) hangzhouLabel.value.style.transform = `translate(${hx + 12}px, ${hy + 8}px)`
+  if (xiningLabel.value) xiningLabel.value.style.transform = `translate(${xx - 34}px, ${xy - 24}px)`
+  if (departureStamp.value) departureStamp.value.style.transform = `translate(${hx + 20}px, ${hy + 20}px) rotate(-8deg)`
+
   context.save()
   context.beginPath()
   for (let i = 0; i <= 80 * drawing.flight; i += 1) {
@@ -143,7 +152,7 @@ function drawScene(): void {
 
 async function loadMap(): Promise<void> {
   try {
-    const response = await fetch('/maps/china-outline.geojson')
+    const response = await fetch(publicAssetUrl('/maps/china-outline.geojson'))
     if (response.ok) mapFeature.value = await response.json() as GeoFeature
   } finally {
     drawScene()
@@ -166,7 +175,9 @@ async function startTimeline(): Promise<void> {
     drawing.flight = 1
     drawing.route = 1
     drawScene()
-    gsap.set(root.value.querySelectorAll('[data-reveal]'), { autoAlpha: 1, y: 0, scale: 1 })
+    introStore.complete()
+    const target = typeof route.query.to === 'string' && route.query.to.startsWith('/') ? route.query.to : '/'
+    await router.replace(target)
     return
   }
 
@@ -176,9 +187,10 @@ async function startTimeline(): Promise<void> {
     .fromTo('.intro-map', { autoAlpha: 0, scale: 0.97 }, { autoAlpha: 1, scale: 1, duration: 0.8 })
     .fromTo('.departure-stamp', { autoAlpha: 0, scale: 1.5, rotate: -18 }, { autoAlpha: 1, scale: 1, rotate: -8, duration: 0.55 })
     .to(drawing, { flight: 1, duration: 2.1, ease: 'power1.inOut', onUpdate: drawScene })
-    .fromTo('.traveler', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, stagger: 0.12, duration: 0.55 })
-    .fromTo('.intro-van', { autoAlpha: 0, x: 60 }, { autoAlpha: 1, x: 0, duration: 0.7 }, '<0.1')
-    .to('.traveler', { x: 34, y: 12, scale: 0.64, autoAlpha: 0, stagger: 0.06, duration: 0.5 })
+    .fromTo('.intro-party', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.65 })
+    .fromTo('.intro-van-image', { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.18 }, '<0.45')
+    .to('.intro-party', { x: 66, y: 8, scale: 0.82, autoAlpha: 0, duration: 0.62 })
+    .to('.intro-van-image', { x: 66, y: 8, scale: 0.82, duration: 0.62 }, '<')
     .to(drawing, { route: 1, duration: 2.5, ease: 'none', onUpdate: drawScene }, '<0.1')
     .fromTo('.intro-title > *', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, stagger: 0.16, duration: 0.7 })
     .fromTo('.intro-start', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5 }, '<0.1')
@@ -203,6 +215,12 @@ onBeforeUnmount(() => {
 <template>
   <section ref="root" class="intro-journey">
     <div class="intro-paper" aria-hidden="true"></div>
+    <div class="intro-desk" data-intro-desk aria-hidden="true">
+      <span class="intro-object intro-object--notebook" data-intro-object><BookOpenText :size="28" /></span>
+      <span class="intro-object intro-object--camera" data-intro-object><Camera :size="30" /></span>
+      <span class="intro-object intro-object--ticket" data-intro-object><Ticket :size="27" /></span>
+      <span class="intro-object intro-object--compass" data-intro-object><Compass :size="29" /></span>
+    </div>
     <button type="button" class="intro-skip" @click="completeIntro">
       <SkipForward :size="18" />
       跳过序章
@@ -210,17 +228,15 @@ onBeforeUnmount(() => {
 
     <div class="intro-map">
       <canvas ref="canvas" aria-label="中国轮廓及杭州至西宁、青甘环线动画"></canvas>
-      <span class="map-label map-label--hangzhou">杭州</span>
-      <span class="map-label map-label--xining">西宁</span>
+      <span ref="hangzhouLabel" class="map-label map-label--hangzhou">杭州</span>
+      <span ref="xiningLabel" class="map-label map-label--xining">西宁</span>
       <span ref="plane" class="intro-plane"><Plane :size="27" fill="currentColor" /></span>
-      <span class="departure-stamp" data-reveal>出发</span>
+      <span ref="departureStamp" class="departure-stamp" data-reveal>出发</span>
     </div>
 
     <div class="intro-cast" aria-label="六位同行者与一辆商务车">
-      <div class="traveler-row">
-        <span v-for="index in 6" :key="index" class="traveler" :style="{ '--index': index }"></span>
-      </div>
-      <div class="intro-van"><span></span><i></i><i></i></div>
+      <img class="intro-party" :src="introIllustration" alt="六位同行者与蓝色商务车的旅行手账插画" />
+      <img class="intro-van-image" :src="introIllustration" alt="" aria-hidden="true" />
     </div>
 
     <div class="intro-title" data-reveal>
@@ -244,13 +260,15 @@ onBeforeUnmount(() => {
   place-items: center;
   padding: 68px 18px 32px;
   isolation: isolate;
-  background: #ded0bc;
+  background: #6a4a36;
 }
 
 .intro-paper {
   position: absolute;
   z-index: -2;
   inset: 0;
+  border: 1px solid rgb(82 60 44 / 16%);
+  box-shadow: 0 28px 90px rgb(26 18 13 / 34%);
   background:
     radial-gradient(circle at 15% 15%, rgb(255 255 255 / 66%), transparent 28rem),
     repeating-linear-gradient(0deg, rgb(58 43 34 / 2%) 0 1px, transparent 1px 7px),
@@ -302,25 +320,77 @@ onBeforeUnmount(() => {
 
 .map-label {
   position: absolute;
+  top: 0;
+  left: 0;
   color: var(--muted);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
 }
 
-.map-label--hangzhou {
-  right: 11%;
-  bottom: 32%;
+.intro-desk {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
 }
 
-.map-label--xining {
-  left: 35%;
-  top: 36%;
+.intro-object {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  color: #574130;
+  background: #efe0c5;
+  box-shadow: 0 12px 25px rgb(35 24 17 / 24%);
+}
+
+.intro-object--notebook {
+  top: 2.5%;
+  left: 2%;
+  width: 108px;
+  height: 72px;
+  border: 1px solid rgb(78 57 42 / 18%);
+  border-radius: 9px 16px 16px 9px;
+  transform: rotate(-6deg);
+}
+
+.intro-object--camera {
+  bottom: 4%;
+  left: 3%;
+  width: 76px;
+  height: 68px;
+  border-radius: 18px;
+  color: #e9d4af;
+  background: #3f5260;
+  transform: rotate(5deg);
+}
+
+.intro-object--ticket {
+  top: 3%;
+  right: 2%;
+  width: 112px;
+  height: 54px;
+  border: 1px dashed #9e7047;
+  border-radius: 10px;
+  color: #9e7047;
+  transform: rotate(7deg);
+}
+
+.intro-object--compass {
+  right: 2.5%;
+  bottom: 4%;
+  width: 66px;
+  height: 66px;
+  border: 7px double #a7784d;
+  border-radius: 50%;
+  color: #a7784d;
+  background: #efe2c9;
+  transform: rotate(-8deg);
 }
 
 .departure-stamp {
   position: absolute;
-  right: 8%;
-  bottom: 24%;
+  top: 0;
+  left: 0;
   display: grid;
   width: 60px;
   height: 60px;
@@ -337,70 +407,21 @@ onBeforeUnmount(() => {
   z-index: 2;
   bottom: 20%;
   left: 7%;
-  display: flex;
-  align-items: end;
-  gap: 18px;
+  width: clamp(320px, 48vw, 720px);
+  aspect-ratio: 16 / 9;
 }
 
-.traveler-row {
-  display: flex;
-  align-items: end;
-  gap: 5px;
-}
-
-.traveler {
-  --tone: hsl(calc(26 + var(--index) * 24) 34% 44%);
-  position: relative;
-  display: block;
-  width: 15px;
-  height: calc(29px + var(--index) * 1px);
-  border-radius: 9px 9px 3px 3px;
-  background: var(--tone);
-}
-
-.traveler::before {
+.intro-cast img {
   position: absolute;
-  top: -9px;
-  left: 3px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #c89572;
-  content: '';
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left bottom;
+  filter: drop-shadow(0 10px 12px rgb(53 42 36 / 12%));
 }
 
-.intro-van {
-  position: relative;
-  width: 104px;
-  height: 48px;
-  border-radius: 14px 20px 8px 8px;
-  background: #476c75;
-  box-shadow: inset -22px 0 rgb(40 74 82 / 46%);
-}
-
-.intro-van::before {
-  position: absolute;
-  top: 7px;
-  right: 9px;
-  left: 42px;
-  height: 16px;
-  border-radius: 8px 12px 3px 3px;
-  background: rgb(201 227 232 / 74%);
-  content: '';
-}
-
-.intro-van i {
-  position: absolute;
-  bottom: -7px;
-  width: 18px;
-  height: 18px;
-  border: 4px solid #2d2926;
-  border-radius: 50%;
-  background: #d8cbb8;
-}
-
-.intro-van i:first-of-type { left: 16px; }
-.intro-van i:last-of-type { right: 14px; }
+.intro-van-image { clip-path: inset(0 0 0 63%); }
 
 .intro-title {
   position: relative;
@@ -435,13 +456,18 @@ onBeforeUnmount(() => {
 }
 
 @media (min-width: 720px) {
+  .intro-paper {
+    inset: 3.5% 4.5%;
+    border-radius: 22px;
+  }
+
   .intro-map {
-    inset: 4% 4% 14%;
+    inset: 7% 7% 16%;
   }
 
   .intro-cast {
-    bottom: 13%;
-    left: 10%;
+    bottom: 8%;
+    left: 5%;
   }
 
   .intro-title {
@@ -460,5 +486,12 @@ onBeforeUnmount(() => {
     right: 12%;
     bottom: 12%;
   }
+}
+
+@media (max-width: 719px) {
+  .intro-object--notebook,
+  .intro-object--ticket { display: none; }
+  .intro-object--camera { bottom: 2%; left: -12px; transform: scale(.72) rotate(5deg); }
+  .intro-object--compass { right: -11px; bottom: 2%; transform: scale(.72) rotate(-8deg); }
 }
 </style>

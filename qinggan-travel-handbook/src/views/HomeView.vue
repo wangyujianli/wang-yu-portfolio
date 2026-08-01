@@ -1,56 +1,107 @@
 <script setup lang="ts">
-import { ArrowRight, BookOpenText, Camera, Compass, Footprints, ListChecks, Map, MountainSnow, Sparkles, Waves } from '@lucide/vue'
+import { computed, ref } from 'vue'
+import {
+  ArrowRight, BookOpenText, CalendarRange, Camera, Compass, Footprints,
+  ListChecks, Map, Milestone, MountainSnow, Sparkles, Waves,
+} from '@lucide/vue'
+import HomeJourneyMap from '@/components/home/HomeJourneyMap.vue'
+import HomeRouteTicket from '@/components/home/HomeRouteTicket.vue'
 import PlaceCard from '@/components/place/PlaceCard.vue'
-import { places } from '@/data/places'
-import { routeStops } from '@/data/route'
+import { homeJourneyRouteById, homeJourneyRoutes } from '@/data/homeJourneyRoutes'
+import { placeById, places, standalonePlaces } from '@/data/places'
+import { useJourneyStore } from '@/stores/journey'
 import { useVisitedStore } from '@/stores/visited'
+import type { HomeJourneyRoute, JourneyRouteId } from '@/types/content'
 
 const visited = useVisitedStore()
+const journey = useJourneyStore()
+const visibleVisitedCount = computed(() => standalonePlaces.filter((place) => visited.isVisited(place.id)).length)
 const featuredPlace = places.find((place) => place.id === 'wusute-yadan') ?? places[0]!
-const routeNames = routeStops.filter((stop) => stop.kind === 'route').map((stop) => stop.name)
+const initialRouteId = homeJourneyRouteById.has(journey.selectedRouteId)
+  ? journey.selectedRouteId
+  : 'classic'
+const selectedHomeRouteId = ref<JourneyRouteId>(initialRouteId)
+const selectedHomeRoute = computed(() => homeJourneyRouteById.get(selectedHomeRouteId.value) ?? homeJourneyRoutes[0]!)
+const selectedRouteNames = computed(() => selectedHomeRoute.value.placeIds
+  .filter((id, index, ids) => ids.indexOf(id) === index)
+  .map((id) => placeById.get(id)?.name)
+  .filter((name): name is string => Boolean(name)))
 
-const entries = [
-  { to: '/places', title: '地点指南', note: '16 个地点，按兴趣自由翻阅', icon: Compass, className: 'guide' },
+const entries = computed(() => [
+  { to: '/places', title: '地点指南', note: `${standalonePlaces.length} 个地点，另有 1 个生态观察子模块`, icon: Compass, className: 'guide' },
+  { to: '/itinerary', title: '九天参考', note: '只是一种走法，随时可以调整', icon: CalendarRange, className: 'itinerary' },
+  { to: '/nearby', title: '周边可玩', note: '按多出来的时间判断取舍', icon: Milestone, className: 'nearby' },
   { to: '/photo-guide', title: '拍照宝典', note: '八类场景与六人构图', icon: Camera, className: 'photo' },
   { to: '/highlights', title: '沿途彩蛋', note: '七个话题，顺路再看', icon: Sparkles, className: 'highlights' },
-  { to: '/footprints', title: '我的足迹', note: `${visited.count} 处已去过`, icon: Footprints, className: 'footprints' },
-  { to: '/preparation', title: '出发准备', note: '票务、道路与开放信息', icon: ListChecks, className: 'prepare' },
-]
+  { to: '/footprints', title: '我的足迹', note: `${visibleVisitedCount.value} 处已去过`, icon: Footprints, className: 'footprints' },
+])
 
 const routeChapters = [
   { number: '01', title: '文明向西', places: '西宁、塔尔寺、张掖、嘉峪关、敦煌', icon: BookOpenText },
   { number: '02', title: '进入荒野', places: '阿克塞、G315、水上雅丹、大柴旦', icon: MountainSnow },
   { number: '03', title: '回到湖泊', places: '茶卡盐湖、青海湖', icon: Waves },
 ]
+
+function selectHomeRoute(route: HomeJourneyRoute): void {
+  selectedHomeRouteId.value = route.id
+  journey.selectRoute(route.id)
+}
+
+function syncRouteBeforeMap(): void {
+  journey.selectRoute(selectedHomeRoute.value.id)
+}
 </script>
 
 <template>
   <main class="home page-shell">
-    <section class="home-hero magazine-grid">
-      <div class="home-hero__copy">
-        <p class="eyebrow">THE WESTWARD FIELD NOTES · 2026</p>
-        <h1>向西<br />而行</h1>
-        <p class="home-hero__subtitle">一册跟着六个人从杭州飞向西宁，再沿青甘山河慢慢展开的自由探索手册。</p>
-        <div class="home-hero__actions">
-          <RouterLink to="/map" class="button-primary"><Map :size="20" />打开探索地图</RouterLink>
-          <RouterLink to="/places" class="button-secondary">先看地点 <ArrowRight :size="19" /></RouterLink>
+    <section class="home-map-hero" data-home-map-stage>
+      <header class="home-map-hero__header">
+        <div class="home-map-hero__title">
+          <p class="eyebrow">THE WESTWARD FIELD NOTES · 2026</p>
+          <h1>向西而行</h1>
+          <p>六个人从杭州飞抵西宁，落地换乘商务车。地图先展开，走哪一条，再慢慢商量。</p>
         </div>
-      </div>
+        <div class="home-hero-tools" data-home-hero-tools>
+          <aside class="home-progress" aria-label="青甘探索进度" data-home-progress>
+            <span>此刻足迹</span>
+            <strong>{{ visibleVisitedCount }}<small>/{{ standalonePlaces.length }}</small></strong>
+            <RouterLink to="/footprints">查看我的足迹 <ArrowRight :size="16" /></RouterLink>
+          </aside>
+          <RouterLink to="/preparation" class="home-preparation" data-home-preparation>
+            <span>出发准备</span>
+            <strong>10<small>项</small></strong>
+            <em>查看确认清单 <ArrowRight :size="16" /></em>
+          </RouterLink>
+        </div>
+      </header>
 
-      <div class="home-cover" aria-hidden="true">
-        <div class="home-cover__sun"></div>
-        <div class="home-cover__mountain home-cover__mountain--far"></div>
-        <div class="home-cover__mountain home-cover__mountain--near"></div>
-        <div class="home-cover__road"></div>
-        <span class="home-cover__issue">FIELD NOTE<br />NO. 06</span>
-        <span class="home-cover__caption">杭州 → 西宁 → 青甘环线</span>
+      <div class="home-map-hero__stage">
+        <HomeJourneyMap :route="selectedHomeRoute" :visited-ids="visited.visitedIds" />
+        <aside class="home-route-panel" aria-label="选择路线">
+          <div class="home-route-panel__heading">
+            <span>ROUTE SELECT</span>
+            <h2>两种走法，同一片西北</h2>
+            <p>都从现有地点里选择。经典线看完整，优选线看反差。</p>
+          </div>
+          <div class="home-route-panel__tickets">
+            <HomeRouteTicket
+              v-for="route in homeJourneyRoutes"
+              :key="route.id"
+              :route="route"
+              :selected="selectedHomeRoute.id === route.id"
+              @select="selectHomeRoute(route)"
+            />
+          </div>
+          <div class="home-route-panel__actions">
+            <RouterLink to="/preparation" class="button-primary" data-start-exploring>
+              <ListChecks :size="19" />开始探索
+            </RouterLink>
+            <RouterLink to="/map" class="button-secondary" @click="syncRouteBeforeMap">
+              <Map :size="19" />直接看地图
+            </RouterLink>
+          </div>
+        </aside>
       </div>
-
-      <aside class="journey-counter paper-card">
-        <span>此刻足迹</span>
-        <strong>{{ visited.count }}</strong>
-        <p>共 16 处地点，可随时标记已去过。</p>
-      </aside>
     </section>
 
     <section class="route-value" data-route-value>
@@ -71,10 +122,13 @@ const routeChapters = [
       </div>
     </section>
 
-    <section class="route-folio" aria-label="建议探索顺序">
-      <div class="route-folio__heading"><span>ROUTE 01</span><strong>一条环线，不是一张日程表</strong></div>
+    <section class="route-folio" :aria-label="`${selectedHomeRoute.name}探索顺序`">
+      <div class="route-folio__heading">
+        <span>{{ selectedHomeRoute.shortName }}</span>
+        <strong>路线是一种参考，不是一张必须照做的日程表</strong>
+      </div>
       <div class="route-folio__track">
-        <span v-for="(name, index) in routeNames" :key="`${name}-${index}`"><i></i>{{ name }}</span>
+        <span v-for="(name, index) in selectedRouteNames" :key="`${name}-${index}`"><i></i>{{ name }}</span>
       </div>
     </section>
 
@@ -97,150 +151,85 @@ const routeChapters = [
 </template>
 
 <style scoped>
-.home {
-  padding-top: 34px;
-}
+.home { padding-top: 28px; }
 
-.home-hero {
+.home-map-hero {
   position: relative;
-  align-items: stretch;
+  padding: 30px;
+  border: 1px solid var(--line);
+  border-radius: 34px;
+  background: rgb(248 241 228 / 52%);
 }
 
-.home-hero__copy {
-  position: relative;
-  z-index: 2;
-  padding: 28px 4px 8px;
-}
-
-.home-hero h1 {
-  margin: 12px 0 18px;
-  font-size: clamp(4.8rem, 24vw, 9rem);
-  line-height: 0.84;
-  letter-spacing: 0.08em;
-}
-
-.home-hero__subtitle {
-  max-width: 520px;
-  color: var(--muted);
-  font-size: 1rem;
-}
-
-.home-hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 26px;
-}
-
-.home-cover {
-  position: relative;
-  min-height: 420px;
-  overflow: hidden;
-  border-radius: 32px;
-  background: linear-gradient(180deg, #91b5c1 0 49%, #d8be81 50% 61%, #a46f4f 62%);
-  box-shadow: var(--shadow);
-}
-
-.home-cover::before {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(90deg, rgb(255 255 255 / 6%) 0 1px, transparent 1px 8px);
-  content: '';
-}
-
-.home-cover__sun {
-  position: absolute;
-  top: 11%;
-  right: 14%;
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  background: #e9bd72;
-  box-shadow: 0 0 0 22px rgb(255 231 183 / 18%);
-}
-
-.home-cover__mountain {
-  position: absolute;
-  right: -12%;
-  bottom: 25%;
-  width: 92%;
-  height: 42%;
-  clip-path: polygon(0 100%, 18% 54%, 32% 72%, 52% 12%, 70% 64%, 82% 38%, 100% 100%);
-  background: #8c7b61;
-}
-
-.home-cover__mountain--near {
-  right: auto;
-  bottom: 6%;
-  left: -10%;
-  width: 118%;
-  height: 38%;
-  background: #704d3f;
-  opacity: 0.86;
-  clip-path: polygon(0 100%, 0 58%, 21% 24%, 38% 68%, 61% 13%, 76% 58%, 100% 34%, 100% 100%);
-}
-
-.home-cover__road {
-  position: absolute;
-  bottom: -12%;
-  left: 42%;
-  width: 26%;
-  height: 54%;
-  background: #554b47;
-  clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
-}
-
-.home-cover__road::after {
-  position: absolute;
-  top: 6%;
-  bottom: 0;
-  left: 49%;
-  width: 2px;
-  background: repeating-linear-gradient(#f2ddad 0 9px, transparent 9px 18px);
-  content: '';
-}
-
-.home-cover__issue,
-.home-cover__caption {
-  position: absolute;
-  color: #fff;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-}
-
-.home-cover__issue { top: 22px; left: 22px; }
-.home-cover__caption { right: 20px; bottom: 20px; }
-
-.journey-counter {
+.home-map-hero__header {
   display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 3px 16px;
-  padding: 20px;
+  gap: 22px;
+  align-items: end;
+  margin-bottom: 26px;
 }
 
-.journey-counter span {
-  color: var(--sunset);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+.home-map-hero__title h1 {
+  margin: 8px 0 12px;
+  font-size: clamp(3.5rem, 9vw, 6.4rem);
+  line-height: .88;
+  letter-spacing: .08em;
 }
 
-.journey-counter strong {
-  grid-row: span 2;
-  grid-column: 2;
-  justify-self: end;
-  color: var(--lake);
-  font: 700 4.2rem/1 var(--serif);
+.home-map-hero__title > p:last-child {
+  max-width: 690px;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(.95rem, 1.7vw, 1.12rem);
+  line-height: 1.8;
 }
 
-.journey-counter p { margin: 0; color: var(--muted); font-size: 0.82rem; }
-
-.route-folio {
-  margin: 42px 0;
-  padding: 24px 0;
-  border-block: 1px solid var(--line);
+.home-hero-tools {
+  display: grid;
+  width: min(100%, 444px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
+
+.home-progress,
+.home-preparation {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 4px 14px;
+  padding: 17px 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgb(255 255 255 / 48%);
+}
+
+.home-preparation {
+  gap: 4px 8px;
+  color: var(--ink);
+  background: linear-gradient(145deg, rgb(255 255 255 / 52%), rgb(45 127 123 / 8%));
+  text-decoration: none;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.home-preparation:hover { border-color: rgb(45 127 123 / 34%); transform: translateY(-2px); }
+.home-preparation:focus-visible { outline: 3px solid rgb(45 127 123 / 24%); outline-offset: 3px; }
+.home-progress > span,
+.home-preparation > span { color: var(--sunset); font-size: .7rem; font-weight: 700; letter-spacing: .12em; }
+.home-progress strong,
+.home-preparation strong { grid-row: span 2; grid-column: 2; color: var(--lake); font: 700 3.2rem/1 var(--serif); white-space: nowrap; }
+.home-progress strong small,
+.home-preparation strong small { color: var(--muted); font-size: .95rem; }
+.home-progress a,
+.home-preparation em { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: .72rem; font-style: normal; text-decoration: none; }
+.home-preparation em { white-space: nowrap; }
+
+.home-map-hero__stage { display: grid; min-width: 0; gap: 18px; }
+.home-route-panel { display: grid; min-width: 0; align-content: start; gap: 15px; }
+.home-route-panel__heading span { color: var(--sunset); font-size: .7rem; font-weight: 700; letter-spacing: .13em; }
+.home-route-panel__heading h2 { margin: 6px 0; font-size: clamp(1.75rem, 3vw, 2.3rem); }
+.home-route-panel__heading p { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.7; }
+.home-route-panel__tickets { display: grid; gap: 10px; }
+.home-route-panel__actions { display: flex; flex-wrap: wrap; gap: 9px; padding-top: 2px; }
 
 .route-value {
   display: grid;
@@ -249,162 +238,74 @@ const routeChapters = [
   padding: 30px;
   border: 1px solid var(--line);
   border-radius: 30px;
-  background:
-    radial-gradient(circle at 92% 10%, rgb(217 109 59 / 12%), transparent 24%),
-    rgb(255 255 255 / 34%);
+  background: rgb(255 255 255 / 34%);
 }
 
-.route-value__intro h2 {
-  margin: 9px 0 16px;
-  font-size: clamp(2.2rem, 6vw, 4.6rem);
-}
+.route-value__intro h2 { margin: 9px 0 16px; font-size: clamp(2.2rem, 6vw, 4.6rem); }
+.route-value__intro > p:last-child { max-width: 850px; margin: 0; color: var(--muted); font-size: clamp(.98rem, 1.7vw, 1.14rem); line-height: 1.9; }
+.route-value__chapters { display: grid; gap: 12px; }
+.route-value__chapters article { min-height: 176px; padding: 22px; border: 1px solid var(--line); border-radius: 22px; background: rgb(247 240 229 / 68%); }
+.route-value__chapter-head { display: flex; align-items: center; justify-content: space-between; color: var(--sunset); }
+.route-value__chapter-head span { font: 700 .78rem/1 var(--serif); letter-spacing: .14em; }
+.route-value__chapters h3 { margin: 24px 0 9px; font-size: 1.55rem; }
+.route-value__chapters p { margin: 0; color: var(--muted); font-size: .86rem; line-height: 1.7; }
 
-.route-value__intro > p:last-child {
-  max-width: 850px;
-  margin: 0;
-  color: var(--muted);
-  font-size: clamp(0.98rem, 1.7vw, 1.14rem);
-  line-height: 1.9;
-}
+.route-folio { margin: 42px 0; padding: 24px 0; border-block: 1px solid var(--line); }
+.route-folio__heading { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 22px; font-size: .78rem; }
+.route-folio__heading span { color: var(--sunset); letter-spacing: .12em; }
+.route-folio__track { display: flex; overflow-x: auto; padding: 4px 2px 12px; scrollbar-width: thin; }
+.route-folio__track span { position: relative; display: flex; min-width: 112px; flex: 1 0 auto; flex-direction: column; gap: 8px; color: var(--muted); font-size: .76rem; }
+.route-folio__track span::before { position: absolute; top: 5px; right: 0; left: 8px; height: 1px; background: var(--line); content: ''; }
+.route-folio__track i { z-index: 1; width: 11px; height: 11px; border: 2px solid var(--paper); border-radius: 50%; background: var(--sunset); box-shadow: 0 0 0 1px var(--sunset); }
 
-.route-value__chapters {
-  display: grid;
-  gap: 12px;
-}
-
-.route-value__chapters article {
-  min-height: 176px;
-  padding: 22px;
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: rgb(247 240 229 / 68%);
-}
-
-.route-value__chapter-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--sunset);
-}
-
-.route-value__chapter-head span {
-  font: 700 0.78rem/1 var(--serif);
-  letter-spacing: 0.14em;
-}
-
-.route-value__chapters h3 {
-  margin: 24px 0 9px;
-  font-size: 1.55rem;
-}
-
-.route-value__chapters p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.86rem;
-  line-height: 1.7;
-}
-
-.route-folio__heading {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 22px;
-  font-size: 0.78rem;
-}
-
-.route-folio__heading span { color: var(--sunset); letter-spacing: 0.12em; }
-
-.route-folio__track {
-  display: flex;
-  overflow-x: auto;
-  padding: 4px 2px 12px;
-  scrollbar-width: thin;
-}
-
-.route-folio__track span {
-  position: relative;
-  display: flex;
-  min-width: 94px;
-  flex: 1 0 auto;
-  flex-direction: column;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 0.76rem;
-}
-
-.route-folio__track span::before {
-  position: absolute;
-  top: 5px;
-  right: 0;
-  left: 8px;
-  height: 1px;
-  background: var(--line);
-  content: '';
-}
-
-.route-folio__track i {
-  z-index: 1;
-  width: 11px;
-  height: 11px;
-  border: 2px solid var(--paper);
-  border-radius: 50%;
-  background: var(--sunset);
-  box-shadow: 0 0 0 1px var(--sunset);
-}
-
-.home-entries {
-  margin-bottom: 56px;
-}
-
-.entry-card {
-  position: relative;
-  display: grid;
-  min-height: 138px;
-  grid-template-columns: auto 1fr auto;
-  align-items: start;
-  gap: 16px;
-  padding: 24px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  color: var(--ink);
-  background: rgb(255 255 255 / 38%);
-  text-decoration: none;
-}
-
+.home-entries { margin-bottom: 56px; }
+.entry-card { position: relative; display: grid; min-height: 138px; grid-template-columns: auto 1fr auto; align-items: start; gap: 16px; padding: 24px; overflow: hidden; border: 1px solid var(--line); border-radius: 24px; color: var(--ink); background: rgb(255 255 255 / 38%); text-decoration: none; }
 .entry-card h2 { margin: 0 0 7px; font-size: 1.35rem; }
-.entry-card p { margin: 0; color: var(--muted); font-size: 0.83rem; }
+.entry-card p { margin: 0; color: var(--muted); font-size: .83rem; }
 .entry-card__arrow { align-self: end; color: var(--sunset); }
 .entry-card--photo { background: rgb(45 127 123 / 10%); }
 .entry-card--highlights { background: rgb(217 109 59 / 9%); }
-
-.home-feature > header {
-  max-width: 740px;
-  margin-bottom: 24px;
-}
-
-.home-feature h2 {
-  font-size: clamp(2rem, 5vw, 4.2rem);
-}
+.home-feature > header { max-width: 740px; margin-bottom: 24px; }
+.home-feature h2 { font-size: clamp(2rem, 5vw, 4.2rem); }
 
 @media (min-width: 720px) {
-  .home-hero__copy { grid-column: 1 / 6; grid-row: 1; align-self: center; }
-  .home-cover { grid-column: 6 / -1; grid-row: 1; min-height: 540px; }
-  .journey-counter { grid-column: 8 / -1; grid-row: 1; align-self: end; margin: 0 22px 22px 0; z-index: 3; }
+  .home-route-panel__tickets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .route-value { padding: 38px; }
+  .route-value__chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .entry-card { grid-column: span 4; }
   .entry-card--guide { grid-column: span 7; }
   .entry-card--photo { grid-column: span 5; }
+  .entry-card--itinerary { grid-column: span 5; background: rgb(47 95 143 / 8%); }
+  .entry-card--nearby { grid-column: span 4; background: rgb(102 116 81 / 9%); }
   .entry-card--highlights { grid-column: span 5; }
   .entry-card--footprints { grid-column: span 3; }
-  .entry-card--prepare { grid-column: span 4; }
-  .route-value { padding: 38px; }
-  .route-value__chapters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 900px) {
+  .home-map-hero__header { grid-template-columns: minmax(0, 1fr) auto; }
+  .home-map-hero__stage { grid-template-columns: minmax(0, 1.35fr) minmax(360px, .65fr); align-items: start; }
+  .home-route-panel__tickets { grid-template-columns: 1fr; }
+  .home-map-hero__stage :deep(.home-route-map) { min-height: 610px; }
 }
 
 @media (min-width: 1100px) {
-  .home-hero__copy { grid-column: 1 / span 5; }
-  .home-cover { grid-column: 6 / span 6; }
-  .journey-counter { grid-column: 10 / -1; align-self: end; margin: 0 0 44px -50px; }
   .route-value { grid-template-columns: minmax(0, 1.1fr) minmax(560px, 1.4fr); align-items: end; }
+}
+
+@media (max-width: 719px) {
+  .home { padding-top: 16px; }
+  .home-map-hero { padding: 18px 14px 20px; border-radius: 26px; }
+  .home-hero-tools { width: 100%; gap: 8px; }
+  .home-progress,
+  .home-preparation { gap: 3px 8px; padding: 14px 12px; }
+  .home-progress strong,
+  .home-preparation strong { font-size: 2.35rem; }
+  .home-progress a,
+  .home-preparation em { font-size: .66rem; }
+  .home-route-panel__tickets { display: flex; overflow-x: auto; margin-inline: -14px; padding: 2px 14px 10px; scroll-snap-type: x mandatory; }
+  .home-route-panel__tickets :deep(.route-ticket) { flex: 0 0 86%; scroll-snap-align: start; }
+  .home-route-panel__actions > * { flex: 1 1 150px; justify-content: center; }
+  .route-value { padding: 22px 16px; border-radius: 24px; }
+  .route-folio__heading { flex-direction: column; }
 }
 </style>

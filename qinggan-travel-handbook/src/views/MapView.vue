@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { FilterX, List, Map, RefreshCw, Route as RouteIcon } from '@lucide/vue'
+import { Building2, FilterX, Leaf, List, Map, RefreshCw, Route as RouteIcon } from '@lucide/vue'
 import FallbackRouteAtlas from '@/components/map/FallbackRouteAtlas.vue'
 import MapPlaceSheet from '@/components/map/MapPlaceSheet.vue'
 import RouteMap from '@/components/map/RouteMap.vue'
@@ -8,6 +8,7 @@ import SectionHeading from '@/components/common/SectionHeading.vue'
 import { placeById, places } from '@/data/places'
 import { filterJourneyPlaces } from '@/data/journeyFilters'
 import { journeyRoutes } from '@/data/journeyRoutes'
+import { routeScopeLabels } from '@/data/placeClassifications'
 import { resetAMapLoader } from '@/lib/amap'
 import { useJourneyStore } from '@/stores/journey'
 import { useVisitedStore } from '@/stores/visited'
@@ -38,9 +39,14 @@ const experienceOptions: Array<{ value: ExperienceLevel; label: string }> = [
   { value: 'add-two-to-four-days', label: '增加2至4天' },
 ]
 
+function switchMode(nextMode: 'live' | 'atlas'): void {
+  selectedId.value = null
+  mode.value = nextMode
+}
+
 function handleFailure(reason: string): void {
   mapNotice.value = `${reason}，已切换为完整路线图文版。`
-  mode.value = 'atlas'
+  switchMode('atlas')
 }
 
 function retryMap(): void {
@@ -51,7 +57,7 @@ function retryMap(): void {
   resetAMapLoader()
   mapVersion.value += 1
   mapNotice.value = ''
-  mode.value = 'live'
+  switchMode('live')
 }
 </script>
 
@@ -60,8 +66,8 @@ function retryMap(): void {
     <div class="map-page__head">
       <SectionHeading eyebrow="ROUTE ATLAS" title="探索地图" intro="杭州飞往西宁，再沿门源、河西走廊、敦煌和柴达木回到青海湖。路线是一条建议的线，不是一张必须照做的日程表。" />
       <div class="map-switch" role="group" aria-label="地图显示方式">
-        <button type="button" :class="{ active: mode === 'live' }" :disabled="!hasKey" @click="mode = 'live'"><Map :size="18" />真实地图</button>
-        <button type="button" :class="{ active: mode === 'atlas' }" @click="mode = 'atlas'"><List :size="18" />图文路线</button>
+        <button type="button" :class="{ active: mode === 'live' }" :disabled="!hasKey" @click="switchMode('live')"><Map :size="18" />真实地图</button>
+        <button type="button" :class="{ active: mode === 'atlas' }" @click="switchMode('atlas')"><List :size="18" />图文路线</button>
       </div>
     </div>
 
@@ -75,6 +81,7 @@ function retryMap(): void {
           type="button"
           :class="{ active: journey.selectedRouteId === routeOption.id }"
           :aria-pressed="journey.selectedRouteId === routeOption.id"
+          :data-route-scope="routeOption.scope"
           @click="journey.selectRoute(routeOption.id)"
         >
           <RouteIcon :size="18" />
@@ -97,7 +104,15 @@ function retryMap(): void {
       <footer><span>当前显示 {{ filteredPlaces.length }} 处</span><button v-if="journey.selectedPlaceTypes.length || journey.selectedExperienceLevels.length" type="button" @click="journey.clearFilters"><FilterX :size="17" />清空筛选</button></footer>
     </section>
 
-    <section v-if="mode === 'live'" class="live-map-layout">
+    <section class="map-route-legend" data-map-route-legend aria-label="地图图例">
+      <span><i class="legend-line legend-line--main"></i>{{ routeScopeLabels['main-route'] }}</span>
+      <span><i class="legend-line legend-line--lenghu"></i>{{ routeScopeLabels['lenghu-extension'] }}</span>
+      <span><i class="legend-line legend-line--golmud"></i>{{ routeScopeLabels['golmud-extension'] }}</span>
+      <span><Building2 :size="16" />城市与补给</span>
+      <span><Leaf :size="16" />生态观察</span>
+    </section>
+
+    <section v-if="mode === 'live'" class="live-map-layout" :class="{ 'live-map-layout--selected': selectedPlace }">
       <div class="live-map-frame paper-card">
         <RouteMap :key="`${mapVersion}-${filterSignature}`" :route="journey.selectedRoute" :places="filteredPlaces" :selected-id="selectedId" :visited-ids="visited.visitedIds" @ready="mapNotice = ''" @failed="handleFailure" @select="selectedId = $event" />
       </div>
@@ -134,15 +149,23 @@ function retryMap(): void {
 .filter-row button.active { color: #fff; background: var(--ink); }
 .map-controls footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .76rem; }
 .map-controls footer button { display: inline-flex; min-height: 42px; align-items: center; gap: 6px; padding: 0 12px; border: 0; border-radius: 999px; color: var(--lake); background: rgb(45 127 123 / 9%); cursor: pointer; }
+.map-route-legend { display: flex; gap: 8px; overflow-x: auto; margin: -10px 0 22px; padding: 2px 0 6px; scrollbar-width: none; }
+.map-route-legend::-webkit-scrollbar { display: none; }
+.map-route-legend span { display: inline-flex; min-height: 34px; flex: 0 0 auto; align-items: center; gap: 7px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: rgb(255 255 255 / 30%); font-size: .7rem; white-space: nowrap; }
+.map-route-legend svg { color: var(--lake); }
+.legend-line { display: inline-block; width: 28px; height: 3px; border-radius: 999px; background: #b47a2c; }
+.legend-line--lenghu { background: repeating-linear-gradient(90deg, #61765a 0 9px, transparent 9px 15px); }
+.legend-line--golmud { background: repeating-linear-gradient(90deg, #66859a 0 4px, transparent 4px 11px); }
 .live-map-layout { display: grid; gap: 18px; margin-top: 24px; }
 .live-map-frame { min-height: 560px; overflow: hidden; }
 .fallback-sheet { position: fixed; z-index: 55; right: 10px; bottom: 78px; left: 10px; max-height: min(440px, 65vh); overflow-y: auto; }
 .live-sheet { position: fixed; z-index: 55; right: 10px; bottom: 78px; left: 10px; max-height: min(440px, 65vh); overflow-y: auto; }
 
 @media (min-width: 720px) {
-  .route-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .route-options { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .filter-row { grid-template-columns: 76px minmax(0, 1fr); align-items: center; }
-  .live-map-layout { grid-template-columns: minmax(0, 1.4fr) minmax(310px, 0.6fr); align-items: start; }
+  .live-map-layout { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .live-map-layout--selected { grid-template-columns: minmax(0, 1.4fr) minmax(310px, 0.6fr); }
   .live-map-layout :deep(.map-place-sheet) { position: sticky; top: 94px; right: auto; bottom: auto; left: auto; max-height: none; overflow: visible; }
   .fallback-sheet { right: 28px; bottom: 28px; left: auto; width: min(420px, 42vw); }
 }

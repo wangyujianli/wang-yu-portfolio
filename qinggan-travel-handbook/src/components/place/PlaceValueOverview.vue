@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ArrowLeftRight, Clock3, Compass, Sparkles, Users } from '@lucide/vue'
 import type { Place } from '@/types/content'
+import { extensionNoticeFor, placePriorityLabels, routeScopeLabels } from '@/data/placeClassifications'
 
 defineProps<{ place: Place }>()
 </script>
@@ -11,6 +12,17 @@ defineProps<{ place: Place }>()
       <p class="eyebrow">THE REASON TO STOP</p>
       <h2>先看懂这一站，再决定停多久</h2>
     </header>
+
+    <div class="place-value__classification">
+      <p data-classification-summary>
+        本次分类：{{ placePriorityLabels[place.classification.priority] }} · {{ routeScopeLabels[place.classification.routeScope] }}
+      </p>
+      <p data-classification-reason>{{ place.classification.priorityReason }}</p>
+      <small>{{ place.classification.routeReason }}</small>
+      <small v-if="place.classification.seasonalNote" class="place-value__seasonal">{{ place.classification.seasonalNote }}</small>
+      <small v-if="place.classification.routeDecisionNote" class="place-value__decision-note" data-route-decision-note>{{ place.classification.routeDecisionNote }}</small>
+      <aside v-if="extensionNoticeFor(place.classification.routeScope)" data-extension-notice>{{ extensionNoticeFor(place.classification.routeScope) }}</aside>
+    </div>
 
     <div class="place-value__grid">
       <article class="place-value__reason">
@@ -29,7 +41,7 @@ defineProps<{ place: Place }>()
       <article class="place-value__decision">
         <Compass :size="21" :stroke-width="1.6" />
         <p class="place-value__label" data-value-heading>推荐等级</p>
-        <strong :data-priority="place.value.priority">{{ place.value.priorityLabel }}</strong>
+        <strong :data-priority="place.classification.priority">{{ place.value.priorityLabel }}</strong>
       </article>
 
       <article class="place-value__audience">
@@ -72,6 +84,26 @@ defineProps<{ place: Place }>()
   display: grid;
   gap: 12px;
 }
+
+.place-value__classification {
+  display: grid;
+  gap: 9px;
+  margin-bottom: 18px;
+  padding: 18px 20px;
+  border-left: 2px solid var(--sunset);
+  border-radius: 0 16px 16px 0;
+  background: rgb(255 255 255 / 32%);
+}
+
+.place-value__classification p,
+.place-value__classification small,
+.place-value__classification aside { margin: 0; }
+.place-value__classification > p:first-child { color: var(--sunset); font-size: .78rem; font-weight: 800; letter-spacing: .04em; }
+.place-value__classification > p:nth-child(2) { font: 600 1rem/1.75 var(--serif); }
+.place-value__classification small { color: var(--muted); line-height: 1.65; }
+.place-value__classification aside { padding: 13px 15px; border: 1px dashed rgb(45 127 123 / 28%); border-radius: 13px; color: var(--lake); background: rgb(45 127 123 / 7%); line-height: 1.65; }
+.place-value__decision-note { color: var(--ink) !important; }
+.place-value__seasonal { color: #8a5b2f !important; }
 
 .place-value article {
   position: relative;

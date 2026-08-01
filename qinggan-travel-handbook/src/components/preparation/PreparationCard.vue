@@ -5,7 +5,7 @@ import { copyText } from '@/services/clipboard'
 import { preparationChangeNotice } from '@/data/preparation'
 import type { PreparationCard } from '@/types/content'
 
-const props = defineProps<{ card: PreparationCard }>()
+defineProps<{ card: PreparationCard }>()
 
 const expanded = ref(false)
 const copiedValue = ref('')

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">住宿图片暂缺</title><desc id="desc">沙漠米背景上的行李箱与山形线稿</desc>
+  <rect width="1200" height="720" fill="#eee4d2"/><path d="M95 510l234-213 123 114 167-165 270 264" fill="none" stroke="#7a9aa0" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="466" y="318" width="270" height="254" rx="34" fill="#c57b55"/><path d="M544 318v-42c0-47 28-75 57-75s57 28 57 75v42" fill="none" stroke="#68483b" stroke-width="16"/><path d="M521 408h160M521 468h160" stroke="#f3e7d3" stroke-width="12" stroke-linecap="round"/>
+  <text x="600" y="654" text-anchor="middle" fill="#554138" font-family="serif" font-size="34" letter-spacing="7">图片暂缺 · 可打开外部详情查看</text>
+</svg>

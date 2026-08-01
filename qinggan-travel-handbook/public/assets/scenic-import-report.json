@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-08-01T09:02:58.839Z",
+  "sourceRoot": "C:\\Users\\81421\\Desktop\\青甘格尔木延伸线_实景图片参考包\\青甘大环线_全部景点实景图片参考包",
+  "supplementalSourceRoot": "C:\\Users\\81421\\Desktop\\青甘\\reference-assetsall-images\\青甘大环线_全部景点实景图片参考包",
+  "included": 38,
+  "excluded": [
+    {
+      "fileName": "门源油菜花_1_WWWN_来自小红书网页版.jpg",
+      "folderName": "02_门源油菜花",
+      "reason": "rights-marker"
+    },
+    {
+      "fileName": "999a68c6a37198579cb6f7bb45cf9cd3.jpg",
+      "folderName": "18_可可西里景观",
+      "reason": "unsuitable-wildlife-feeding"
+    }
+  ],
+  "skippedUnmapped": []
+}

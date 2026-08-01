@@ -3,42 +3,74 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { MapPinned } from '@lucide/vue'
 import VisitedToggle from '@/components/common/VisitedToggle.vue'
 import { routeCombinations } from '@/data/combinations'
-import { placeById, places } from '@/data/places'
-import { routeStops } from '@/data/route'
+import { placeById } from '@/data/places'
+import { routeLineStyles } from '@/data/placeClassifications'
+import type { JourneyRoute, Place, RouteScope } from '@/types/content'
 
-const props = defineProps<{ visitedIds: string[] }>()
+const props = defineProps<{ visitedIds: string[]; route: JourneyRoute; places: Place[]; selectedId?: string | null }>()
 const emit = defineEmits<{ select: [placeId: string] }>()
+const atlasScroller = ref<HTMLElement>()
 const atlas = ref<HTMLElement>()
 const canvas = ref<HTMLCanvasElement>()
 let resizeObserver: ResizeObserver | undefined
 
-const westStops = routeStops.filter((stop) => stop.kind === 'route')
+const routePlaces = computed(() => props.route.placeIds.map((id) => placeById.get(id)).filter((place): place is Place => Boolean(place?.classification.isStandalone)))
+const displayPlaces = computed(() => props.places.filter((place) => place.classification.isStandalone))
 const visitedSet = computed(() => new Set(props.visitedIds))
 
 function position(coordinates: readonly [number, number]): { left: string; top: string } {
   const [longitude, latitude] = coordinates
-  const left = 8 + ((longitude - 93) / 9.5) * 84
-  const top = 92 - ((latitude - 36) / 5.1) * 80
+  const longitudes = routePlaces.value.map((place) => place.coordinates[0])
+  const latitudes = routePlaces.value.map((place) => place.coordinates[1])
+  const minLng = Math.min(...longitudes) - .5
+  const maxLng = Math.max(...longitudes) + .5
+  const minLat = Math.min(...latitudes) - .35
+  const maxLat = Math.max(...latitudes) + .35
+  const left = 8 + ((longitude - minLng) / Math.max(maxLng - minLng, 1)) * 84
+  const top = 92 - ((latitude - minLat) / Math.max(maxLat - minLat, 1)) * 80
   return { left: `${left}%`, top: `${top}%` }
 }
 
-const markerOffsets: Record<string, readonly [number, number]> = {
-  xining: [-15, -10],
-  'taer-temple': [14, 12],
-  'guazhou-earth-son': [-14, 12],
-  'guazhou-boundless': [14, -12],
-  mogao: [-14, -11],
-  'mingsha-moon-spring': [15, 12],
-}
+function markerPosition(place: Place): { left: string; top: string } {
+  const base = position(place.coordinates)
+  const nearby = displayPlaces.value.filter((candidate) => (
+    Math.abs(candidate.coordinates[0] - place.coordinates[0]) < 0.65
+    && Math.abs(candidate.coordinates[1] - place.coordinates[1]) < 0.45
+  ))
+  if (nearby.length < 2) return base
 
-function markerPosition(placeId: string, coordinates: readonly [number, number]): { left: string; top: string } {
-  const base = position(coordinates)
-  const [offsetX = 0, offsetY = 0] = markerOffsets[placeId] ?? []
+  const clusterIndex = nearby.findIndex((candidate) => candidate.id === place.id)
+  const offsets = [
+    { x: -42, y: -24 },
+    { x: 42, y: -24 },
+    { x: 0, y: 36 },
+    { x: -44, y: 34 },
+    { x: 44, y: 34 },
+  ]
+  const offset = offsets[clusterIndex % offsets.length] ?? { x: 0, y: 0 }
   return {
-    left: `calc(${base.left} + ${offsetX}px)`,
-    top: `calc(${base.top} + ${offsetY}px)`,
+    left: `calc(${base.left} + ${offset.x}px)`,
+    top: `calc(${base.top} + ${offset.y}px)`,
   }
 }
+
+interface CanvasRouteSegment {
+  scope: RouteScope
+  places: Place[]
+}
+
+const routeSegments = computed<CanvasRouteSegment[]>(() => {
+  const segments: CanvasRouteSegment[] = []
+  for (let index = 1; index < routePlaces.value.length; index += 1) {
+    const previous = routePlaces.value[index - 1]!
+    const current = routePlaces.value[index]!
+    const scope = current.classification.routeScope
+    const last = segments.at(-1)
+    if (last?.scope === scope) last.places.push(current)
+    else segments.push({ scope, places: [previous, current] })
+  }
+  return segments
+})
 
 function drawRoute(): void {
   if (!canvas.value || !atlas.value) return
@@ -50,24 +82,34 @@ function drawRoute(): void {
   if (!context) return
   context.scale(ratio, ratio)
   context.clearRect(0, 0, rect.width, rect.height)
-  context.beginPath()
-  westStops.forEach((stop, index) => {
-    const style = position(stop.coordinates)
-    const x = Number.parseFloat(style.left) / 100 * rect.width
-    const y = Number.parseFloat(style.top) / 100 * rect.height
-    if (index === 0) context.moveTo(x, y)
-    else context.lineTo(x, y)
+  routeSegments.value.forEach((segment) => {
+    const lineStyle = routeLineStyles[segment.scope]
+    context.beginPath()
+    context.setLineDash(lineStyle.dash)
+    segment.places.forEach((place, index) => {
+      const style = position(place.coordinates)
+      const x = Number.parseFloat(style.left) / 100 * rect.width
+      const y = Number.parseFloat(style.top) / 100 * rect.height
+      if (index === 0) context.moveTo(x, y)
+      else context.lineTo(x, y)
+    })
+    context.strokeStyle = segment.scope === 'main-route' ? props.route.accent : lineStyle.color
+    context.globalAlpha = lineStyle.opacity
+    context.lineWidth = segment.scope === 'main-route' ? 4 : 3
+    context.lineCap = 'round'
+    context.lineJoin = 'round'
+    context.stroke()
   })
-  context.strokeStyle = '#d96d3b'
-  context.lineWidth = 4
-  context.lineCap = 'round'
-  context.lineJoin = 'round'
-  context.stroke()
+  context.setLineDash([])
+  context.globalAlpha = 1
 }
 
 onMounted(async () => {
   await nextTick()
   drawRoute()
+  if (atlasScroller.value) {
+    atlasScroller.value.scrollLeft = atlasScroller.value.scrollWidth - atlasScroller.value.clientWidth
+  }
   resizeObserver = new ResizeObserver(drawRoute)
   if (atlas.value) resizeObserver.observe(atlas.value)
 })
@@ -77,33 +119,34 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
 
 <template>
   <div class="fallback-atlas">
-    <section ref="atlas" class="atlas-map" aria-label="青甘环线地理示意图">
-      <canvas ref="canvas" aria-hidden="true"></canvas>
-      <div class="atlas-map__wash" aria-hidden="true"></div>
-      <button
-        v-for="place in places"
-        :key="place.id"
-        type="button"
-        class="atlas-marker"
-        :class="{ 'is-visited': visitedSet.has(place.id), 'is-highlight': place.category === '沿途彩蛋' }"
-        :style="markerPosition(place.id, place.coordinates)"
-        :aria-label="`查看${place.name}`"
-        @click="emit('select', place.id)"
-      >
-        {{ place.routeOrder }}<span>{{ place.name }}</span>
-      </button>
-      <div class="atlas-map__legend"><MapPinned :size="18" /><span>路线示意，非导航地图</span></div>
-    </section>
+    <div ref="atlasScroller" class="atlas-map-scroll" tabindex="0" aria-label="横向浏览路线示意图">
+      <section ref="atlas" class="atlas-map" aria-label="青甘环线地理示意图">
+        <canvas ref="canvas" aria-hidden="true"></canvas>
+        <div class="atlas-map__wash" aria-hidden="true"></div>
+        <button
+          v-for="(place, index) in displayPlaces"
+          :key="place.id"
+          type="button"
+          class="atlas-marker"
+          :class="{ 'is-visited': visitedSet.has(place.id), 'is-highlight': place.category === '沿途彩蛋', 'is-selected': selectedId === place.id }"
+          :style="markerPosition(place)"
+          :aria-label="`查看${place.name}`"
+          @click="emit('select', place.id)"
+        >
+          {{ index + 1 }}<span>{{ place.name }}</span>
+        </button>
+        <div class="atlas-map__legend"><MapPinned :size="18" /><span>路线示意，非导航地图</span></div>
+      </section>
+    </div>
 
     <section class="atlas-route-list">
-      <header><p class="eyebrow">ROUTE INDEX</p><h2>完整图文路线</h2></header>
-      <article v-for="(stop, index) in westStops" :key="stop.id">
+      <header><p class="eyebrow">ROUTE INDEX · {{ route.shortName }}</p><h2>完整图文路线</h2><p>{{ route.description }}</p></header>
+      <article v-for="(place, index) in displayPlaces" :key="place.id">
         <span>{{ String(index + 1).padStart(2, '0') }}</span>
-        <button v-if="stop.placeId" type="button" @click="emit('select', stop.placeId)">
-          <strong>{{ stop.name }}</strong><small>{{ stop.note }}</small>
+        <button type="button" @click="emit('select', place.id)">
+          <strong>{{ place.name }}</strong><small>{{ place.value.reasonToVisit }}</small>
         </button>
-        <div v-else><strong>{{ stop.name }}</strong><small>{{ stop.note }}</small></div>
-        <VisitedToggle v-if="stop.placeId && placeById.has(stop.placeId)" :place-id="stop.placeId" compact />
+        <VisitedToggle :place-id="place.id" compact />
       </article>
     </section>
 
@@ -121,8 +164,15 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
 
 <style scoped>
 .fallback-atlas { display: grid; gap: 24px; }
+.atlas-map-scroll {
+  min-width: 0;
+  overflow-x: auto;
+  border-radius: 28px;
+  scrollbar-color: color-mix(in srgb, var(--lake) 35%, transparent) transparent;
+}
 .atlas-map {
   position: relative;
+  width: 720px;
   min-height: 520px;
   overflow: hidden;
   border-radius: 28px;
@@ -152,10 +202,12 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
 .atlas-marker span { display: none; position: absolute; top: 35px; left: 50%; width: max-content; max-width: 100px; color: var(--ink); font-size: 0.64rem; font-weight: 700; transform: translateX(-50%); }
 .atlas-marker.is-visited { background: var(--lake); }
 .atlas-marker.is-highlight { border-radius: 9px; background: var(--sunset); }
+.atlas-marker.is-selected { outline: 4px solid rgb(45 127 123 / 28%); transform: translate(-50%, -50%) scale(1.14); }
 .atlas-map__legend { position: absolute; z-index: 4; right: 14px; bottom: 14px; display: flex; align-items: center; gap: 6px; padding: 9px 12px; border-radius: 999px; color: var(--muted); background: rgb(247 240 229 / 86%); font-size: 0.7rem; }
 
 .atlas-route-list { padding: 24px; border: 1px solid var(--line); border-radius: 28px; background: rgb(255 255 255 / 38%); }
 .atlas-route-list h2 { margin-bottom: 20px; font-size: 2rem; }
+.atlas-route-list header > p:last-child { color: var(--muted); font-size: .82rem; }
 .atlas-route-list article { display: grid; grid-template-columns: 38px minmax(0, 1fr); align-items: center; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); }
 .atlas-route-list article > span { color: var(--sunset); font: 700 0.78rem/1 var(--serif); }
 .atlas-route-list article button:not(.visited-toggle), .atlas-route-list article > div { display: grid; gap: 3px; padding: 0; border: 0; text-align: left; background: none; cursor: pointer; }
@@ -172,7 +224,8 @@ onBeforeUnmount(() => resizeObserver?.disconnect())
 
 @media (min-width: 720px) {
   .fallback-atlas { grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr); align-items: start; }
-  .atlas-map { position: sticky; top: 90px; min-height: 650px; }
+  .atlas-map-scroll { position: sticky; top: 90px; overflow: visible; }
+  .atlas-map { width: 100%; min-height: 650px; }
   .atlas-route-list article { grid-template-columns: 38px minmax(0, 1fr) auto; }
   .atlas-route-list article :deep(.visited-toggle) { grid-column: auto; }
   .atlas-combinations { grid-column: 1 / -1; }

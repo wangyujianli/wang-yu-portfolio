@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { Camera, Compass, Footprints, House, Map, RotateCcw } from '@lucide/vue'
+import { CalendarRange, Camera, Compass, Footprints, House, ListChecks, Map, Milestone, RotateCcw } from '@lucide/vue'
 
 const navItems = [
   { to: '/', label: '首页', icon: House },
+  { to: '/preparation', label: '出发准备', icon: ListChecks },
   { to: '/map', label: '探索地图', icon: Map },
   { to: '/places', label: '地点指南', icon: Compass },
   { to: '/photo-guide', label: '拍照宝典', icon: Camera },
   { to: '/footprints', label: '我的足迹', icon: Footprints },
+]
+
+const journeyItems = [
+  { to: '/itinerary', label: '九天参考', icon: CalendarRange },
+  { to: '/nearby', label: '周边可玩', icon: Milestone },
 ]
 </script>
 
@@ -24,6 +30,13 @@ const navItems = [
     <nav class="top-nav" aria-label="主要导航">
       <RouterLink v-for="item in navItems" :key="item.to" :to="item.to" :aria-label="item.label">
         <component :is="item.icon" :size="18" :stroke-width="1.8" />
+        <span>{{ item.label }}</span>
+      </RouterLink>
+    </nav>
+
+    <nav class="journey-nav" aria-label="参考路线与周边">
+      <RouterLink v-for="item in journeyItems" :key="item.to" :to="item.to">
+        <component :is="item.icon" :size="17" :stroke-width="1.7" />
         <span>{{ item.label }}</span>
       </RouterLink>
     </nav>
@@ -94,6 +107,10 @@ const navItems = [
   gap: 4px;
 }
 
+.journey-nav { display: none; align-items: center; gap: 2px; padding-left: 8px; border-left: 1px solid var(--line); }
+.journey-nav a { display: inline-flex; min-height: 44px; align-items: center; gap: 6px; padding: 0 10px; border-radius: 999px; color: var(--muted); font-size: .76rem; text-decoration: none; white-space: nowrap; }
+.journey-nav a.router-link-exact-active { color: var(--ink); background: rgb(255 255 255 / 58%); }
+
 .top-nav a,
 .replay-link {
   display: inline-flex;
@@ -143,5 +160,6 @@ const navItems = [
   }
 
   .replay-link span { display: inline; }
+  .journey-nav { display: flex; }
 }
 </style>

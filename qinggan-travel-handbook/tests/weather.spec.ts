@@ -1,80 +1,78 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { getPlaceWeather } from '@/services/weather'
+import { mount } from '@vue/test-utils'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import WeatherPanel from '@/components/weather/WeatherPanel.vue'
+import WeatherQuickCheckSection from '@/components/weather/WeatherQuickCheckSection.vue'
+import {
+  weatherCheckpointForPlace,
+  weatherCheckpoints,
+  weatherNotice,
+} from '@/data/weatherCheckpoints'
 
-const payload = {
-  timezone: 'Asia/Shanghai',
-  current: {
-    time: '2026-08-01T10:00',
-    temperature_2m: 18.6,
-    apparent_temperature: 17.1,
-    precipitation_probability: 12,
-    weather_code: 2,
-    wind_speed_10m: 8.4,
-  },
-  daily: {
-    time: ['2026-08-01', '2026-08-02'],
-    temperature_2m_max: [24, 23],
-    temperature_2m_min: [11, 10],
-    precipitation_probability_max: [18, 22],
-    weather_code: [2, 3],
-    sunrise: ['2026-08-01T06:20', '2026-08-02T06:21'],
-    sunset: ['2026-08-01T20:18', '2026-08-02T20:17'],
-  },
-}
-
-const okFetch = vi.fn<typeof fetch>(async () => new Response(JSON.stringify(payload), { status: 200 }))
-
-describe('weather service', () => {
-  beforeEach(() => {
-    localStorage.clear()
-    okFetch.mockClear()
+describe('static weather quick check', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
   })
 
-  it('maps a successful Open-Meteo response', async () => {
-    const result = await getPlaceWeather('xining', [101.7782, 36.6171], {
-      fetcher: okFetch,
-      now: () => new Date('2026-08-01T02:30:00.000Z').getTime(),
+  it('provides exactly the eleven approved route checkpoints', () => {
+    expect(weatherCheckpoints.map((item) => item.name)).toEqual([
+      '西宁',
+      '门源',
+      '张掖',
+      '嘉峪关',
+      '敦煌',
+      '水上雅丹',
+      '大柴旦',
+      '茶卡',
+      '青海湖',
+      '格尔木',
+      '昆仑山口',
+    ])
+
+    for (const checkpoint of weatherCheckpoints) {
+      expect(checkpoint.impact.length, checkpoint.name).toBeGreaterThan(12)
+      expect(checkpoint.clothing.length, checkpoint.name).toBeGreaterThan(8)
+      expect(checkpoint.protection.length, checkpoint.name).toBeGreaterThan(8)
+      expect(checkpoint.weatherUrl, checkpoint.name).toMatch(/^https:\/\/www\.weather\.com\.cn\//)
+    }
+  })
+
+  it('renders impact guidance and a safe external link without requesting an API', () => {
+    const fetchSpy = vi.fn()
+    vi.stubGlobal('fetch', fetchSpy)
+    const checkpoint = weatherCheckpointForPlace('qinghai-lake')
+    expect(checkpoint).toBeDefined()
+
+    const wrapper = mount(WeatherPanel, {
+      props: { checkpoint: checkpoint! },
     })
 
-    expect(result.status).toBe('ready')
-    expect(result.current?.temperature).toBe(19)
-    expect(result.daily).toHaveLength(2)
-    expect(result.daily[0]?.high).toBe(24)
-    expect(String(okFetch.mock.calls[0]?.[0])).toContain('latitude=36.6171')
-  })
-
-  it('reuses a fresh six-hour cache without another request', async () => {
-    const now = new Date('2026-08-01T02:30:00.000Z').getTime()
-    await getPlaceWeather('xining', [101.7782, 36.6171], { fetcher: okFetch, now: () => now })
-    const result = await getPlaceWeather('xining', [101.7782, 36.6171], {
-      fetcher: okFetch,
-      now: () => now + 60_000,
+    expect(wrapper.text()).toContain('天气速查与影响提醒')
+    expect(wrapper.text()).toContain('青海湖')
+    expect(wrapper.text()).toContain('穿衣提醒')
+    expect(wrapper.text()).toContain('建议出发前一天再次确认')
+    expect(wrapper.text()).toContain(weatherNotice)
+    expect(wrapper.text()).not.toMatch(/\b-?\d{1,2}\s*°/)
+    expect(wrapper.find('[data-weather-link]').attributes()).toMatchObject({
+      target: '_blank',
+      rel: 'noopener noreferrer',
     })
-
-    expect(okFetch).toHaveBeenCalledTimes(1)
-    expect(result.isCached).toBe(true)
+    expect(fetchSpy).not.toHaveBeenCalled()
   })
 
-  it('falls back to stale cached data after a request failure', async () => {
-    const now = new Date('2026-08-01T02:30:00.000Z').getTime()
-    await getPlaceWeather('xining', [101.7782, 36.6171], { fetcher: okFetch, now: () => now })
-    const failedFetch = vi.fn(async () => { throw new Error('offline') })
+  it('shows all route checkpoints in the preparation quick-check section', () => {
+    const wrapper = mount(WeatherQuickCheckSection)
 
-    const result = await getPlaceWeather('xining', [101.7782, 36.6171], {
-      fetcher: failedFetch,
-      now: () => now + 7 * 60 * 60 * 1000,
-    })
-
-    expect(result.status).toBe('ready')
-    expect(result.isCached).toBe(true)
-    expect(result.notice).toContain('上次更新')
+    expect(wrapper.findAll('[data-weather-checkpoint]')).toHaveLength(11)
+    expect(wrapper.text()).toContain(weatherNotice)
+    expect(wrapper.findAll('[data-weather-link]')).toHaveLength(11)
   })
 
-  it('returns an unavailable state when no cache exists', async () => {
-    const failedFetch = vi.fn(async () => { throw new Error('offline') })
-    const result = await getPlaceWeather('xining', [101.7782, 36.6171], { fetcher: failedFetch })
-
-    expect(result.status).toBe('unavailable')
-    expect(result.daily).toEqual([])
+  it('maps route places to a relevant approved checkpoint without inventing extra nodes', () => {
+    expect(weatherCheckpointForPlace('xining')?.name).toBe('西宁')
+    expect(weatherCheckpointForPlace('mogao-grottoes')?.name).toBe('敦煌')
+    expect(weatherCheckpointForPlace('g315-u-road')?.name).toBe('水上雅丹')
+    expect(weatherCheckpointForPlace('qinghai-lake')?.name).toBe('青海湖')
+    expect(weatherCheckpointForPlace('kunlun-pass')?.name).toBe('昆仑山口')
+    expect(weatherCheckpointForPlace('delingha')).toBeUndefined()
   })
 })

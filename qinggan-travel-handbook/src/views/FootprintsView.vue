@@ -3,19 +3,20 @@ import { computed } from 'vue'
 import { Compass, Map } from '@lucide/vue'
 import PlaceCard from '@/components/place/PlaceCard.vue'
 import SectionHeading from '@/components/common/SectionHeading.vue'
-import { places } from '@/data/places'
+import { standalonePlaces } from '@/data/places'
 import { useVisitedStore } from '@/stores/visited'
 
 const store = useVisitedStore()
-const visitedPlaces = computed(() => places.filter((place) => store.isVisited(place.id)).sort((a, b) => a.routeOrder - b.routeOrder))
+const visitedPlaces = computed(() => standalonePlaces.filter((place) => store.isVisited(place.id)).sort((a, b) => a.routeOrder - b.routeOrder))
+const visibleVisitedCount = computed(() => visitedPlaces.value.length)
 </script>
 
 <template>
   <main class="footprints-page page-shell">
     <section class="footprints-head magazine-grid">
       <SectionHeading eyebrow="OUR TRAVEL STAMPS" title="我的足迹" intro="只记一件事：这里，我们已经去过。没有日期、文字或照片需要整理。" />
-      <div class="footprint-stamp" :class="{ 'footprint-stamp--empty': store.count === 0 }">
-        <span>已探索</span><strong>{{ store.count }}</strong><small>/ 16 PLACES</small>
+      <div class="footprint-stamp" :class="{ 'footprint-stamp--empty': visibleVisitedCount === 0 }">
+        <span>已探索</span><strong>{{ visibleVisitedCount }}</strong><small>/ {{ standalonePlaces.length }} PLACES</small>
       </div>
     </section>
 
