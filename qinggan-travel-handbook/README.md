@@ -55,9 +55,11 @@ VITE_AMAP_SECURITY_CODE=你的安全密钥
 - `src/data/combinations.ts`：顺路组合建议。
 - `src/data/photoGuides.ts`：八类摄影方法、动作与配色。
 - `src/data/highlights.ts`：沿途热点和彩蛋。
-- `src/data/preparation.ts`：出发前建议复核。
+- `src/data/preparation.ts`：出发前确认中心的 8 张主题卡、确认时间、完整清单、官方链接、微信渠道、电话与信息整理时间。
 
 字段类型统一定义在 `src/types/content.ts`。新增地点时，请同时保证 `id`、`slug` 唯一，并补齐合法坐标和路线引用；`npm run test:run` 会检查内容完整性。
+
+准备中心的页面结构由数据自动生成。修改票务、活动、健康、道路或紧急联系内容时，优先编辑 `src/data/preparation.ts`；官方链接只填写已确认的景区或管理机构入口，微信渠道填写可复制的准确名称，电话号码只保留数字与连字符。涉及开放、票务、活动和天气的信息同步更新对应卡片的 `updatedAt`。
 
 拍照宝典图片位于 `public/images/photo-guide/`。替换时建议保持现有文件名，或同步修改 `src/data/photoGuides.ts` 中的路径。图片是随项目发布的参考素材，不包含用户照片上传或同步能力。
 

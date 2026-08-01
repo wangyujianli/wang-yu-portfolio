@@ -16,7 +16,7 @@
 - 内容、服务、状态、组件和页面分层清晰。
 - 中国轮廓为本地 GeoJSON；核心页面不依赖地图服务启动。
 - `npm run type-check`：通过。
-- `npm run test:run`：10 个测试文件、22 项测试全部通过。
+- `npm run test:run`：13 个测试文件、32 项测试全部通过。
 - `npm run build`：通过，生产资源输出到 `dist/`。
 - `npm audit --omit=dev`：生产依赖 0 个已知漏洞。
 
@@ -51,6 +51,9 @@
 - 18 张用户提供的拍照姿势图已筛选并以稳定文件名打包；页面另有结构化动作、镜头与穿搭配色补充。
 - 16 个地点均配有独立的本地风景图，地点列表、详情页与地图卡片共用结构化图片字段；文件存在性、唯一性和替代文本由测试校验。
 - 地点图片来源、作者与许可说明记录在 `docs/media/place-image-sources.md`。
+- 出发前确认中心由 8 张结构化主题卡生成，完整覆盖确认时间、三条摘要、分组清单、第一方官网、可复制微信名称、直拨电话和信息整理时间。
+- 莫高窟、鸣沙山和茶卡外链只指向已核对的官方入口；水上雅丹未生成未确认的“官网”按钮。
+- 健康危险信号使用独立红棕色边框，并提供 120 直拨和“一般旅行安全信息不能代替医生诊断”说明。
 - 内容扫描未发现年龄、内部身份、固定 Day 行程或命令式禁令标签。
 - 黑独山、野生动物、宗教场所、无人机和临时开放信息使用事实、现场规定与得体建议表达。
 - 不存在登录、后台、笔记、照片上传、照片同步、实时定位、导航、支付或社交分享入口。
@@ -66,6 +69,8 @@
 - 地图密集点位经实测增加视觉偏移；桌面地点名改为悬停/聚焦显示，编号和右侧路线索引常驻。
 - 首屏、序章、地图、地点天气和拍照宝典均有真实浏览器截图，不以代码判断代替视觉检查。
 - 新增风景图在 820px 展开屏和 390px 普通手机实拍通过，详情主图读取到 1024×576 原图，控制台错误为 0。
+- 出发前确认中心在 390px、820px、1440px 分别呈现一列、两列、三列；三个尺寸均满足 `scrollWidth <= clientWidth`。
+- 移动端紧急按钮与底部导航保留 8px 间隔；紧急抽屉实际渲染 12 个 `tel:` 链接，微信复制在浏览器显示“已复制”，控制台错误与警告为 0。
 
 关键截图：
 
@@ -79,6 +84,11 @@
 - `screenshots/places-scenic-820.png`
 - `screenshots/places-scenic-390.png`
 - `screenshots/place-scenic-detail-820.png`
+- `screenshots/preparation-center-390.png`
+- `screenshots/preparation-emergency-390.png`
+- `screenshots/preparation-center-820.png`
+- `screenshots/preparation-center-detail-820.png`
+- `screenshots/preparation-center-1440.png`
 
 ## 第五关：发布
 
@@ -88,7 +98,7 @@
 - README 已说明启动、地图 Key、天气、内容修改、静态部署与 localStorage。
 - SPA 的未知路径需要回退到 `index.html`，README 提供 Nginx、Netlify 等配置提示。
 - 生产构建通过；构建产物不依赖后台服务。
-- 正式目录已从无 `node_modules`、无旧 `dist` 的状态执行全新 `npm install`，随后再次通过类型检查、21 项测试、生产构建和生产依赖审计。
+- 正式目录此前已从无 `node_modules`、无旧 `dist` 的状态执行全新 `npm install`；本次增量修改后再次通过类型检查、32 项测试与生产构建，未增加依赖。
 
 ## 截图索引
 
@@ -99,4 +109,5 @@
 | 地点列表 | `places-scenic-390.png` | `places-scenic-820.png` | — |
 | 地点详情 | `place-detail-390.png` | `place-detail-weather-820.png`、`place-scenic-detail-820.png` | — |
 | 拍照宝典 | `photo-guide-390.png` | — | `photo-guide-1440.png` |
+| 出发前确认中心 | `preparation-center-390.png`、`preparation-emergency-390.png` | `preparation-center-820.png`、`preparation-center-detail-820.png` | `preparation-center-1440.png` |
 | 旅行序章 | — | `intro-820.png`、`intro-final-820.png` | — |

@@ -3,6 +3,7 @@ import { routeCombinations } from '@/data/combinations'
 import { highlights } from '@/data/highlights'
 import { photoGuides, photoPlaceExamples } from '@/data/photoGuides'
 import { places } from '@/data/places'
+import { preparationCards } from '@/data/preparation'
 import { routeStops } from '@/data/route'
 
 describe('travel handbook content', () => {
@@ -45,7 +46,7 @@ describe('travel handbook content', () => {
   })
 
   it('does not expose internal persona labels or fixed-day schedules', () => {
-    const serialized = JSON.stringify({ places, highlights, photoGuides, routeCombinations })
+    const serialized = JSON.stringify({ places, highlights, photoGuides, routeCombinations, preparationCards })
     expect(serialized).not.toMatch(/50.?60|中老年|适老|长辈|领导专属|Day\s*[1-9]/i)
   })
 })

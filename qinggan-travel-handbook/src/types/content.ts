@@ -95,10 +95,51 @@ export interface PhotoSceneGuide {
   overviewImage: string
 }
 
-export interface PreparationItem {
-  id: string
+export type PreparationUrgency = 'urgent' | 'important' | 'normal'
+export type PreparationSectionTone = 'normal' | 'warning' | 'danger'
+export type OfficialLinkType = 'official-site' | 'official-ticket'
+export type PhoneContactType = 'emergency' | 'rescue' | 'consultation'
+export type PhoneContactGroup = 'national' | 'scenic'
+
+export interface PreparationSection {
   title: string
-  category: '票务' | '活动' | '天气' | '道路' | '设备' | '开放信息'
-  summary: string
-  checks: string[]
+  items: string[]
+  tone?: PreparationSectionTone
+}
+
+export interface OfficialLink {
+  label: string
+  url: string
+  type: OfficialLinkType
+}
+
+export interface CopyableChannel {
+  label: string
+  value: string
+}
+
+export interface PhoneContact {
+  label: string
+  number: string
+  type: PhoneContactType
+  group: PhoneContactGroup
+}
+
+export interface PreparationCard {
+  id: string
+  number: string
+  category: string
+  title: string
+  urgency: PreparationUrgency
+  timingLabel: string
+  confirmTiming: string
+  description: string
+  summary: string[]
+  sections: PreparationSection[]
+  officialLinks?: OfficialLink[]
+  wechatChannels?: CopyableChannel[]
+  phones?: PhoneContact[]
+  updatedAt: string
+  timeSensitive?: boolean
+  disclaimer?: string
 }
