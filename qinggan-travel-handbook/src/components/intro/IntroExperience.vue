@@ -19,7 +19,7 @@ let previousBodyOverflow = ''
 
 const stage = computed<IntroStageId>(() => introStages[stageIndex.value]?.id ?? 'opening')
 const feature = computed(() => introFeatures[featureIndex.value] ?? introFeatures[0]!)
-const backdropUrl = publicAssetUrl('assets/scenic/intro-riyueshan-prayer-flags.webp')
+const backdropUrl = publicAssetUrl('assets/intro/riyueshan-prayer-flags.webp')
 
 function clearTimers() {
   clearTimeout(stageTimer)
