@@ -1,4 +1,4 @@
-name: Deploy GitHub Pages
+name: Deploy portfolio and Qinggan handbook
 
 on:
   push:
@@ -26,18 +26,29 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: qinggan-travel-handbook/package-lock.json
 
       - name: Install dependencies
+        working-directory: qinggan-travel-handbook
         run: npm ci
 
-      - name: Verify and build
+      - name: Verify and build handbook
+        working-directory: qinggan-travel-handbook
         env:
-          VITE_BASE_PATH: /qinggan-travel-handbook/
+          VITE_BASE_PATH: /wang-yu-portfolio/qinggan-travel-handbook/
         run: |
           npm run lint
           npm run test:run
           npm run images:verify
           npm run build
+
+      - name: Assemble Pages site
+        run: |
+          mkdir -p _site/qinggan-travel-handbook
+          cp index.html styles.css script.js .nojekyll _site/
+          cp -R assets output _site/
+          cp -R qinggan-travel-handbook/dist/. _site/qinggan-travel-handbook/
+          touch _site/.nojekyll
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -45,7 +56,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./dist
+          path: ./_site
 
   deploy:
     environment:

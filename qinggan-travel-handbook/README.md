@@ -179,7 +179,7 @@ npm run build
 
 将 `dist/` 上传到任意静态托管平台即可。平台需要把未知路径回退到 `index.html`，否则直接刷新详情路由会返回 404。
 
-项目已包含 `.github/workflows/deploy-pages.yml`。独立仓库推送到 `main` 后，GitHub Actions 会依次运行代码检查、测试、图片校验和生产构建，再发布 `dist/`。线上使用 Hash 路由，因此 GitHub Pages 直接刷新详情页不会依赖服务器回退；默认仓库地址对应 `https://wangyujianli.github.io/qinggan-travel-handbook/`。
+当前仓库在根目录的 `.github/workflows/deploy-pages.yml` 中配置了 GitHub Pages。推送到 `main` 后，GitHub Actions 会依次运行代码检查、测试、图片校验和生产构建；发布产物会保留原作品集首页，并把本手册部署到 `https://wangyujianli.github.io/wang-yu-portfolio/qinggan-travel-handbook/`。线上使用 Hash 路由，直接刷新详情页不依赖服务器回退。
 
 - Nginx：`try_files $uri $uri/ /index.html;`
 - Netlify：`/* /index.html 200`
