@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
-import { RouterLink } from 'vue-router'
 import {
   ArrowDown, Camera, CarFront, CloudSun, ContactRound, HeartPulse,
   PhoneCall, Shirt, SunMedium, TicketCheck, UtensilsCrossed,
@@ -34,10 +33,10 @@ const icons: Record<PreparationIconKey, Component> = {
     </header>
 
     <div class="workbench__grid">
-      <RouterLink
+      <a
         v-for="(entry, index) in entries"
         :key="entry.id"
-        :to="{ name: 'preparation', hash: `#${entry.id}` }"
+        :href="`#/preparation#${entry.id}`"
         class="workbench-card"
         :class="`workbench-card--${entry.icon}`"
         data-preparation-entry
@@ -55,7 +54,7 @@ const icons: Record<PreparationIconKey, Component> = {
           <p>{{ entry.reminder }}</p>
           <span>查看详情 <ArrowDown :size="16" /></span>
         </div>
-      </RouterLink>
+      </a>
     </div>
   </section>
 </template>

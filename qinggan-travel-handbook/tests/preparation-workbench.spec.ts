@@ -44,8 +44,9 @@ describe('preparation workbench', () => {
 
     for (const entry of entries) {
       const href = entry.attributes('href') ?? ''
-      expect(href).toMatch(/^#.+/)
-      expect(wrapper.find(href).exists(), href).toBe(true)
+      expect(href).toMatch(/^#\/preparation#.+/)
+      const targetId = href.split('#').pop() ?? ''
+      expect(wrapper.find(`#${targetId}`).exists(), href).toBe(true)
     }
   })
 
