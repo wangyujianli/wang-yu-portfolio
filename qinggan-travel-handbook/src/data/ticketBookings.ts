@@ -178,6 +178,28 @@ export const ticketBookingsByPlaceId: Record<string, TicketBookingInfo> = {
   'tibetan-antelope': ticket({ ticketStatus: 'access-control', ticketLabel: '无统一门票，只能在合法道路和允许观察区域远距离观看', bookingLevel: 'not-required', bookingLabel: '无需景区预约，需确认观察边界', bookingLeadTime: '前一天确认道路和保护管理信息', confirmationTiming: '动物出现不可预设，以合法道路和远距离观察为前提', sourceLevel: 'A', contacts: [contact('紧急报警', '110', 'authority'), contact('医疗急救', '120', 'authority'), contact('交通事故报警', '122', 'authority')], accessNotes: ['动物位置和数量不可预设', '不公布所谓固定出没点。'], operatingHours: noFixed('无普通景区开闭园时间，观察以保护管理和道路开放信息为准', 'access-controlled', 'access-controlled', ['保护区管理提示', '道路管理信息']) }),
 }
 
+ticketBookingsByPlaceId['riyue-mountain'] = ticket({
+  ticketStatus: 'partially-ticketed',
+  ticketLabel: '进入正式景区通常需要购票，公路途经无统一门票',
+  bookingLevel: 'recommended',
+  bookingLabel: '进入正式景区前建议确认',
+  bookingLeadTime: '建议提前1天确认',
+  confirmationTiming: '出行前确认当日开放状态、正式入口、停止入园与天气',
+  bookingNotes: ['根据最新通知，景区于8月1日、8月2日临时闭园，已于8月3日恢复对外开放。'],
+  operatingHours: operating({
+    mode: 'seasonal',
+    summary: '当前已恢复开放；旺季通常07:00—19:30，淡季通常08:30—18:30',
+    displayStatus: 'verify-before-visit',
+    confirmationChannel: ['属地官方文旅公告', '景区或现场游客中心'],
+    adjustmentReasons: ['临时闭园', '天气', '道路与现场管理', '季节调整'],
+    confirmationNote: '当前状态：根据最新通知，景区于8月1日、8月2日临时闭园，已于8月3日恢复对外开放。出行前请务必确认当日状态，以免耽误行程。',
+    periods: [
+      { id: 'high', label: '旺季', dateRange: '4月—10月', openTime: '07:00', closeTime: '19:30' },
+      { id: 'low', label: '淡季', dateRange: '11月—次年3月', openTime: '08:30', closeTime: '18:30' },
+    ],
+  }),
+})
+
 export const ticketBookingFor = (placeId: string): TicketBookingInfo => {
   const info = ticketBookingsByPlaceId[placeId]
   if (!info) throw new Error(`Missing ticket booking data for ${placeId}`)
