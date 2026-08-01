@@ -14,6 +14,8 @@ describe('travel handbook content', () => {
     for (const place of places) {
       expect(place.name.length).toBeGreaterThan(1)
       expect(place.summary.length).toBeGreaterThan(8)
+      expect(place.image).toMatch(/^\/images\/places\/[a-z0-9-]+\.(jpg|png)$/)
+      expect(place.imageAlt.length).toBeGreaterThan(6)
       expect(place.conventionalPlay.length).toBeGreaterThan(0)
       expect(place.unconventionalPlay.length).toBeGreaterThan(0)
       expect(place.soloPoses).toHaveLength(3)

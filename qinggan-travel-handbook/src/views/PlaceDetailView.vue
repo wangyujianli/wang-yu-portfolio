@@ -10,6 +10,11 @@ import { placeBySlug } from '@/data/places'
 
 const route = useRoute()
 const place = computed(() => placeBySlug.get(String(route.params.slug)))
+
+function hideBrokenImage(event: Event): void {
+  const image = event.currentTarget
+  if (image instanceof HTMLImageElement) image.hidden = true
+}
 </script>
 
 <template>
@@ -17,7 +22,10 @@ const place = computed(() => placeBySlug.get(String(route.params.slug)))
     <RouterLink to="/places" class="back-link"><ArrowLeft :size="19" />返回地点指南</RouterLink>
 
     <section class="place-hero" :data-tone="place.visualTone">
-      <div class="place-hero__visual" aria-hidden="true"><i></i><i></i><span>{{ String(place.routeOrder).padStart(2, '0') }}</span></div>
+      <div class="place-hero__visual">
+        <img :src="place.image" :alt="place.imageAlt" decoding="async" fetchpriority="high" @error="hideBrokenImage" />
+        <i></i><i></i><span>{{ String(place.routeOrder).padStart(2, '0') }}</span>
+      </div>
       <div class="place-hero__copy">
         <p class="eyebrow">{{ place.category }} · PLACE FILE {{ String(place.routeOrder).padStart(2, '0') }}</p>
         <h1>{{ place.name }}</h1>
@@ -74,6 +82,24 @@ const place = computed(() => placeBySlug.get(String(route.params.slug)))
   background: linear-gradient(160deg, #91b5c1 0 43%, #d8b16f 44% 62%, #79503f 63%);
 }
 
+.place-hero__visual img {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.place-hero__visual::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 42%, rgb(38 31 27 / 30%) 100%);
+  content: '';
+  pointer-events: none;
+}
+
 .place-hero[data-tone='lake'] .place-hero__visual,
 .place-hero[data-tone='salt'] .place-hero__visual,
 .place-hero[data-tone='emerald'] .place-hero__visual { background: linear-gradient(165deg, #8ab6c5 0 42%, #e7e2cf 43% 52%, #3d8b87 53% 73%, #a38d68 74%); }
@@ -104,6 +130,7 @@ const place = computed(() => placeBySlug.get(String(route.params.slug)))
 
 .place-hero__visual span {
   position: absolute;
+  z-index: 3;
   top: 22px;
   right: 24px;
   color: rgb(255 255 255 / 72%);

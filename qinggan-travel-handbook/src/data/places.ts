@@ -19,7 +19,7 @@ export const places: Place[] = [
     reservation: { channel: '场馆官方渠道', timing: '计划参观前一至三天', note: '宗教场所和博物馆开放信息可能调整，可在到访前查看当日安排。' },
     pitfalls: ['机场与城区距离需要留出实际车程', '初到高原时不必把第一段行程排得过密'],
     siteNotes: ['宗教场所保持安静，拍摄范围随现场提示', '早晚温差明显，薄外套比临时找衣服从容'],
-    nearbyCombinationIds: [], visualTone: 'sky',
+    nearbyCombinationIds: [], visualTone: 'sky', image: '/images/places/xining.jpg', imageAlt: '群山环绕的西宁城市天际线',
   }),
   place({
     id: 'kumbum-monastery', slug: 'taer-temple', name: '塔尔寺', region: '青海 · 湟中', category: '文化遗址', routeOrder: 2,
@@ -37,7 +37,7 @@ export const places: Place[] = [
     reservation: { channel: '塔尔寺官方票务渠道', timing: '到访前一至三天复核', note: '讲解、开放院落与票务方式以当日信息为准。' },
     pitfalls: ['院落信息密度高，只追着人流走容易错过细节', '强烈正午光会让彩绘反差过大'],
     siteNotes: ['殿堂拍摄范围随现场提示', '转经与礼佛空间以现场秩序为先'],
-    nearbyCombinationIds: [], visualTone: 'brick',
+    nearbyCombinationIds: [], visualTone: 'brick', image: '/images/places/taer-temple.jpg', imageAlt: '山谷中的塔尔寺建筑群与金色屋顶',
   }),
   place({
     id: 'menyuan-gangshika', slug: 'menyuan-gangshika', name: '门源油菜花与岗什卡雪峰', region: '青海 · 门源', category: '草原雪山', routeOrder: 3,
@@ -55,7 +55,7 @@ export const places: Place[] = [
     reservation: { channel: '各观景区官方渠道或现场', timing: '花期临近时复核', note: '花期、观景区开放与交通组织受当年气候影响。' },
     pitfalls: ['只看花期预报而忽略雪峰能见度，会少一半层次', '高原紫外线强，阴天也适合做好防晒'],
     siteNotes: ['花田小路和开放区域以现场动线为准', '清晨与傍晚温差明显'],
-    nearbyCombinationIds: ['menyuan-zhangye'], visualTone: 'flower',
+    nearbyCombinationIds: ['menyuan-zhangye'], visualTone: 'flower', image: '/images/places/menyuan-gangshika.jpg', imageAlt: '门源山脚下连片开放的金色油菜花田',
   }),
   place({
     id: 'biandukou', slug: 'biandukou', name: '扁都口', region: '甘肃 · 民乐', category: '草原雪山', routeOrder: 4,
@@ -73,7 +73,7 @@ export const places: Place[] = [
     reservation: { channel: '通常无需预约', timing: '出发前查看道路与天气', note: '季节性景观和停车条件以沿线实际情况为准。' },
     pitfalls: ['把短暂停留安排得太复杂，会削弱它作为转场的舒展感', '山口天气变化比城市快'],
     siteNotes: ['风大时注意随身物品', '沿线取景以现场可停留位置为准'],
-    nearbyCombinationIds: ['menyuan-zhangye'], visualTone: 'grass',
+    nearbyCombinationIds: ['menyuan-zhangye'], visualTone: 'grass', image: '/images/places/biandukou.jpg', imageAlt: '蓝天下扁都口的油菜花与祁连山地',
   }),
   place({
     id: 'zhangye-danxia', slug: 'zhangye-danxia', name: '张掖七彩丹霞', region: '甘肃 · 张掖', category: '沙漠雅丹', routeOrder: 5,
@@ -91,7 +91,7 @@ export const places: Place[] = [
     reservation: { channel: '景区官方渠道', timing: '旺季建议提前三至七天', note: '门票、深度游与活动产品的入园方式并不相同。' },
     pitfalls: ['只追求高饱和会失去地貌质感', '观景台之间频繁赶场，反而容易错过最好光线'],
     siteNotes: ['热气球等活动受风况和运营日期影响', '景区动线随客流可能调整'],
-    nearbyCombinationIds: ['menyuan-zhangye'], visualTone: 'danxia',
+    nearbyCombinationIds: ['menyuan-zhangye'], visualTone: 'danxia', image: '/images/places/zhangye-danxia.jpg', imageAlt: '云层下色彩分明的张掖丹霞山体',
   }),
   place({
     id: 'jiayuguan-pass', slug: 'jiayuguan-pass', name: '嘉峪关关城', region: '甘肃 · 嘉峪关', category: '文化遗址', routeOrder: 6,
@@ -109,7 +109,7 @@ export const places: Place[] = [
     reservation: { channel: '嘉峪关文物景区官方渠道', timing: '旺季提前一至三天更从容', note: '联票内容和开放区域可按实际兴趣选择。' },
     pitfalls: ['只在城门口拍照会错过内部空间层次', '广角贴近人物容易产生边缘变形'],
     siteNotes: ['城墙与台阶按现场开放动线参观', '大风天气体感温度会明显下降'],
-    nearbyCombinationIds: ['jiayuguan-dunhuang'], visualTone: 'wall',
+    nearbyCombinationIds: ['jiayuguan-dunhuang'], visualTone: 'wall', image: '/images/places/jiayuguan-pass.jpg', imageAlt: '嘉峪关关城的城墙、城楼与宽阔院落',
   }),
   place({
     id: 'son-of-earth', slug: 'son-of-earth', name: '瓜州大地之子', region: '甘肃 · 瓜州', category: '沿途彩蛋', routeOrder: 7,
@@ -127,7 +127,7 @@ export const places: Place[] = [
     reservation: { channel: '通常无需预约', timing: '顺路到访前复核开放信息', note: '公共艺术区域的交通组织以现场为准。' },
     pitfalls: ['镜头离得太近会失去雕塑与荒原的尺度关系', '正午硬光容易让人物和地面都显得平'],
     siteNotes: ['构图以远景和借位为主', '戈壁风大时注意帽子和轻便物品'],
-    nearbyCombinationIds: ['jiayuguan-dunhuang'], visualTone: 'gobi',
+    nearbyCombinationIds: ['jiayuguan-dunhuang'], visualTone: 'gobi', image: '/images/places/son-of-earth.png', imageAlt: '安卧在瓜州戈壁上的大地之子雕塑',
   }),
   place({
     id: 'boundless', slug: 'guazhou-boundless', name: '瓜州无界', region: '甘肃 · 瓜州', category: '沿途彩蛋', routeOrder: 8,
@@ -145,7 +145,7 @@ export const places: Place[] = [
     reservation: { channel: '通常无需预约', timing: '到访前查看沿线开放信息', note: '与瓜州公共艺术点一起顺路安排更自然。' },
     pitfalls: ['人物站得过密会与镂空线条混在一起', '只拍正面证件照式构图会失去空间感'],
     siteNotes: ['风沙天气下镜头容易进灰', '现场可停留位置随交通组织调整'],
-    nearbyCombinationIds: ['jiayuguan-dunhuang'], visualTone: 'line',
+    nearbyCombinationIds: ['jiayuguan-dunhuang'], visualTone: 'line', image: '/images/places/guazhou-boundless.png', imageAlt: '蓝天下纯白镂空的瓜州无界雕塑',
   }),
   place({
     id: 'mogao-grottoes', slug: 'mogao-grottoes', name: '莫高窟', region: '甘肃 · 敦煌', category: '文化遗址', routeOrder: 9,
@@ -163,7 +163,7 @@ export const places: Place[] = [
     reservation: { channel: '莫高窟参观预约官方渠道', timing: '旅行日期确定后尽早关注并预约', note: '票型、场次、参观内容和入场证件需要对应确认。' },
     pitfalls: ['临近到访才看票务，选择空间会明显变小', '只顾拍外景容易错过数字展示提供的理解线索'],
     siteNotes: ['室内可拍摄区域关闭闪光灯，具体范围依现场标识', '文物空间内保持安静，跟随当场参观秩序'],
-    nearbyCombinationIds: ['jiayuguan-dunhuang', 'mogao-mingsha'], visualTone: 'dunhuang',
+    nearbyCombinationIds: ['jiayuguan-dunhuang', 'mogao-mingsha'], visualTone: 'dunhuang', image: '/images/places/mogao-grottoes.jpg', imageAlt: '崖壁前的莫高窟九层楼外景',
   }),
   place({
     id: 'mingsha-crescent', slug: 'mingsha-crescent-spring', name: '鸣沙山月牙泉', region: '甘肃 · 敦煌', category: '沙漠雅丹', routeOrder: 10,
@@ -181,7 +181,7 @@ export const places: Place[] = [
     reservation: { channel: '景区官方渠道', timing: '旺季提前一至三天复核', note: '夜游、演出和体验项目随季节与当日安排变化。' },
     pitfalls: ['把所有体力留给登最高沙丘，可能错过更轻松的侧面机位', '只盯日落点会忽略身后沙纹和云色'],
     siteNotes: ['活动和开放区域按景区当日安排', '日落后返程人流集中，离场方式可提前看一眼'],
-    nearbyCombinationIds: ['mogao-mingsha'], visualTone: 'sunset',
+    nearbyCombinationIds: ['mogao-mingsha'], visualTone: 'sunset', image: '/images/places/mingsha-crescent-spring.jpg', imageAlt: '鸣沙山沙丘环抱月牙泉建筑与绿洲',
   }),
   place({
     id: 'boluo-zhuanjing', slug: 'boluo-zhuanjing', name: '博罗转井石油小镇', region: '甘肃 · 阿克塞', category: '沿途彩蛋', routeOrder: 11,
@@ -199,7 +199,7 @@ export const places: Place[] = [
     reservation: { channel: '现场或当地公开渠道', timing: '顺路前复核开放状态', note: '开放区域与运营状态可能阶段性调整。' },
     pitfalls: ['只模仿电影剧照容易失去自己的同行故事', '破损建筑边缘和地面高差需要留意脚下'],
     siteNotes: ['只使用现场开放的街区与建筑空间', '风沙天气注意镜头与随身物品'],
-    nearbyCombinationIds: ['aksai-g315-yadan'], visualTone: 'cinema',
+    nearbyCombinationIds: ['aksai-g315-yadan'], visualTone: 'cinema', image: '/images/places/aksai-oil-town.jpg', imageAlt: '群山脚下博罗转井石油小镇的旧建筑全景',
   }),
   place({
     id: 'g315-u-road', slug: 'g315-u-road', name: 'G315 U形公路', region: '青海 · 柴达木', category: '公路风景', routeOrder: 12,
@@ -217,7 +217,7 @@ export const places: Place[] = [
     reservation: { channel: '无需预约', timing: '出发前查看道路与天气', note: '路线体验随道路施工、交通与天气变化。' },
     pitfalls: ['把“某个机位”当成唯一目标，会忽略沿途更自然的公路层次', '长途段落的补给和续航比多停一个点更重要'],
     siteNotes: ['动作图只表达公路纵深与人物关系，实际机位随现场条件', '沿线信号与服务点分布不均'],
-    nearbyCombinationIds: ['aksai-g315-yadan'], visualTone: 'road',
+    nearbyCombinationIds: ['aksai-g315-yadan'], visualTone: 'road', image: '/images/places/g315-u-road.jpg', imageAlt: '穿过柴达木荒原起伏延伸的G315公路',
   }),
   place({
     id: 'wusute-yadan', slug: 'wusute-water-yadan', name: '乌素特水上雅丹', region: '青海 · 海西', category: '沙漠雅丹', routeOrder: 13,
@@ -235,7 +235,7 @@ export const places: Place[] = [
     reservation: { channel: '景区官方渠道', timing: '旺季提前一至三天复核', note: '开放区域、景交车与末班时间适合在到访前确认。' },
     pitfalls: ['只在入口附近拍会低估景区尺度', '风力会显著影响水面倒影和体感'],
     siteNotes: ['临水区域与开放步道以现场动线为准', '远距离车程前可顺手确认油量与补给'],
-    nearbyCombinationIds: ['aksai-g315-yadan', 'yadan-emerald'], visualTone: 'yadan',
+    nearbyCombinationIds: ['aksai-g315-yadan', 'yadan-emerald'], visualTone: 'yadan', image: '/images/places/water-yadan.jpg', imageAlt: '浅蓝湖水中并立的乌素特水上雅丹',
   }),
   place({
     id: 'dachaidan-emerald', slug: 'dachaidan-emerald-lake', name: '大柴旦翡翠湖', region: '青海 · 海西', category: '湖泊盐湖', routeOrder: 14,
@@ -253,7 +253,7 @@ export const places: Place[] = [
     reservation: { channel: '景区官方渠道或现场', timing: '到访前一至三天复核', note: '票务、开放区域和交通组织可能随季节调整。' },
     pitfalls: ['过度拉高饱和会把不同湖格拍成同一种绿', '正午无风时光线很硬，可多用侧身和低机位'],
     siteNotes: ['湖区开放边界与栈道按现场安排', '鞋底沾盐后及时简单清理会更舒服'],
-    nearbyCombinationIds: ['yadan-emerald'], visualTone: 'emerald',
+    nearbyCombinationIds: ['yadan-emerald'], visualTone: 'emerald', image: '/images/places/dachaidan-emerald-lake.jpg', imageAlt: '俯瞰大柴旦翡翠湖的绿色湖水与白色盐岸',
   }),
   place({
     id: 'chaka-salt-lake', slug: 'chaka-salt-lake', name: '茶卡盐湖', region: '青海 · 海西', category: '湖泊盐湖', routeOrder: 15,
@@ -271,7 +271,7 @@ export const places: Place[] = [
     reservation: { channel: '所选茶卡景区官方渠道', timing: '旺季提前一至三天', note: '不同景区入口、交通与体验区域并不相同，购票前先确认名称。' },
     pitfalls: ['把镜面效果当作必然，容易被风况影响心情', '只往最远处走却没留意返程交通时间'],
     siteNotes: ['开放体验区域与夜游安排随当日情况', '盐面反光强，眼镜和防晒用品很实用'],
-    nearbyCombinationIds: ['chaka-qinghai'], visualTone: 'salt',
+    nearbyCombinationIds: ['chaka-qinghai'], visualTone: 'salt', image: '/images/places/chaka-salt-lake.jpg', imageAlt: '茶卡盐湖盐雕、远山与平静倒影',
   }),
   place({
     id: 'qinghai-lake', slug: 'qinghai-lake', name: '青海湖', region: '青海 · 海北 / 海南', category: '湖泊盐湖', routeOrder: 16,
@@ -289,7 +289,7 @@ export const places: Place[] = [
     reservation: { channel: '各开放景区官方渠道', timing: '到访前查看所选湖岸点信息', note: '青海湖范围很大，先确认目的地名称再判断票务与交通。' },
     pitfalls: ['一天内追多个湖岸点会把大湖看成停车清单', '同名观景点较多，导航前先核对具体入口'],
     siteNotes: ['湖岸开放范围和生态管理随区域不同', '遇见野生动物时保持自然观察距离'],
-    nearbyCombinationIds: ['chaka-qinghai'], visualTone: 'lake',
+    nearbyCombinationIds: ['chaka-qinghai'], visualTone: 'lake', image: '/images/places/qinghai-lake.jpg', imageAlt: '日落时分青海湖水面的金色倒影',
   }),
 ]
 

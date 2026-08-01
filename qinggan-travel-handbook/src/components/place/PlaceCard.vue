@@ -4,11 +4,17 @@ import VisitedToggle from '@/components/common/VisitedToggle.vue'
 import type { Place } from '@/types/content'
 
 withDefaults(defineProps<{ place: Place; featured?: boolean }>(), { featured: false })
+
+function hideBrokenImage(event: Event): void {
+  const image = event.currentTarget
+  if (image instanceof HTMLImageElement) image.hidden = true
+}
 </script>
 
 <template>
   <article class="place-card paper-card" :class="{ 'place-card--featured': featured }" :data-tone="place.visualTone">
-    <div class="place-card__visual" aria-hidden="true">
+    <div class="place-card__visual">
+      <img :src="place.image" :alt="place.imageAlt" loading="lazy" decoding="async" @error="hideBrokenImage" />
       <span class="place-card__number">{{ String(place.routeOrder).padStart(2, '0') }}</span>
       <i></i><i></i><i></i>
     </div>
@@ -45,6 +51,27 @@ withDefaults(defineProps<{ place: Place; featured?: boolean }>(), { featured: fa
     radial-gradient(circle at 72% 24%, rgb(255 248 213 / 78%) 0 9%, transparent 10%),
     linear-gradient(155deg, #8db4bf 0 45%, #d5a15c 46% 64%, #745647 65%);
 }
+
+.place-card__visual img {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 420ms ease;
+}
+
+.place-card__visual::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(38 31 27 / 6%) 35%, rgb(38 31 27 / 42%) 100%);
+  content: '';
+  pointer-events: none;
+}
+
+.place-card:hover .place-card__visual img { transform: scale(1.025); }
 
 .place-card[data-tone='lake'] .place-card__visual,
 .place-card[data-tone='salt'] .place-card__visual,
@@ -96,7 +123,7 @@ withDefaults(defineProps<{ place: Place; featured?: boolean }>(), { featured: fa
 
 .place-card__number {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: 16px;
   right: 18px;
   color: rgb(255 255 255 / 82%);

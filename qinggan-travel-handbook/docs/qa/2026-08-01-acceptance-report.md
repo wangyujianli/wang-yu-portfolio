@@ -16,7 +16,7 @@
 - 内容、服务、状态、组件和页面分层清晰。
 - 中国轮廓为本地 GeoJSON；核心页面不依赖地图服务启动。
 - `npm run type-check`：通过。
-- `npm run test:run`：9 个测试文件、21 项测试全部通过。
+- `npm run test:run`：10 个测试文件、22 项测试全部通过。
 - `npm run build`：通过，生产资源输出到 `dist/`。
 - `npm audit --omit=dev`：生产依赖 0 个已知漏洞。
 
@@ -49,6 +49,8 @@
 - 16 个地点均由 `src/data/places.ts` 结构化渲染，必填字段、坐标、id 与 slug 由测试校验。
 - 6 组顺路组合、8 类摄影指南、7 项沿途彩蛋与 8 项准备复核内容完整。
 - 18 张用户提供的拍照姿势图已筛选并以稳定文件名打包；页面另有结构化动作、镜头与穿搭配色补充。
+- 16 个地点均配有独立的本地风景图，地点列表、详情页与地图卡片共用结构化图片字段；文件存在性、唯一性和替代文本由测试校验。
+- 地点图片来源、作者与许可说明记录在 `docs/media/place-image-sources.md`。
 - 内容扫描未发现年龄、内部身份、固定 Day 行程或命令式禁令标签。
 - 黑独山、野生动物、宗教场所、无人机和临时开放信息使用事实、现场规定与得体建议表达。
 - 不存在登录、后台、笔记、照片上传、照片同步、实时定位、导航、支付或社交分享入口。
@@ -63,6 +65,7 @@
 - 12 个页面/尺寸组合检查 `scrollWidth <= clientWidth`，无横向溢出。
 - 地图密集点位经实测增加视觉偏移；桌面地点名改为悬停/聚焦显示，编号和右侧路线索引常驻。
 - 首屏、序章、地图、地点天气和拍照宝典均有真实浏览器截图，不以代码判断代替视觉检查。
+- 新增风景图在 820px 展开屏和 390px 普通手机实拍通过，详情主图读取到 1024×576 原图，控制台错误为 0。
 
 关键截图：
 
@@ -73,6 +76,9 @@
 - `screenshots/home-390.png`
 - `screenshots/home-1440.png`
 - `screenshots/photo-guide-1440.png`
+- `screenshots/places-scenic-820.png`
+- `screenshots/places-scenic-390.png`
+- `screenshots/place-scenic-detail-820.png`
 
 ## 第五关：发布
 
@@ -90,6 +96,7 @@
 | --- | --- | --- | --- |
 | 首页 | `home-390.png` | `home-820.png` | `home-1440.png` |
 | 本地路线 | `map-fallback-390.png` | `map-fallback-820.png` | `map-fallback-1440.png` |
-| 地点详情 | `place-detail-390.png` | `place-detail-weather-820.png` | — |
+| 地点列表 | `places-scenic-390.png` | `places-scenic-820.png` | — |
+| 地点详情 | `place-detail-390.png` | `place-detail-weather-820.png`、`place-scenic-detail-820.png` | — |
 | 拍照宝典 | `photo-guide-390.png` | — | `photo-guide-1440.png` |
 | 旅行序章 | — | `intro-820.png`、`intro-final-820.png` | — |

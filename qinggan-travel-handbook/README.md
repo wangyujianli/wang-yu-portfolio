@@ -61,6 +61,8 @@ VITE_AMAP_SECURITY_CODE=你的安全密钥
 
 拍照宝典图片位于 `public/images/photo-guide/`。替换时建议保持现有文件名，或同步修改 `src/data/photoGuides.ts` 中的路径。图片是随项目发布的参考素材，不包含用户照片上传或同步能力。
 
+16 个地点的风景图位于 `public/images/places/`，来源与使用说明见 `docs/media/place-image-sources.md`。替换地点图时可保持原文件名；如果修改文件名，请同步调整 `src/data/places.ts` 中对应地点的 `image` 路径。
+
 ## 部署
 
 这是一个纯静态 Vue 单页应用：
@@ -103,6 +105,7 @@ src/
 
 public/
 ├─ images/photo-guide/  拍照宝典素材
+├─ images/places/       16 个地点的风景图
 └─ maps/                本地中国轮廓与地图素材
 ```
 

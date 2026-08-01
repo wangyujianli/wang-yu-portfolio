@@ -48,6 +48,8 @@ export interface Place {
   nearbyCombinationIds: string[]
   weatherCoordinates: Coordinates
   visualTone: string
+  image: string
+  imageAlt: string
 }
 
 export interface RouteStop {

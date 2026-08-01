@@ -5,11 +5,24 @@ import type { Place } from '@/types/content'
 
 defineProps<{ place: Place }>()
 defineEmits<{ close: [] }>()
+
+function hideBrokenImage(event: Event): void {
+  const image = event.currentTarget
+  if (image instanceof HTMLImageElement) image.hidden = true
+}
 </script>
 
 <template>
   <article class="map-place-sheet paper-card">
     <button type="button" class="map-place-sheet__close" aria-label="关闭地点卡片" @click="$emit('close')"><X :size="19" /></button>
+    <img
+      class="map-place-sheet__image"
+      :src="place.image"
+      :alt="place.imageAlt"
+      loading="lazy"
+      decoding="async"
+      @error="hideBrokenImage"
+    />
     <p class="eyebrow">PLACE {{ String(place.routeOrder).padStart(2, '0') }} · {{ place.category }}</p>
     <h2>{{ place.name }}</h2>
     <p>{{ place.summary }}</p>
@@ -28,6 +41,15 @@ defineEmits<{ close: [] }>()
 .map-place-sheet {
   position: relative;
   padding: 24px;
+}
+
+.map-place-sheet__image {
+  display: block;
+  width: 100%;
+  height: clamp(150px, 26vw, 230px);
+  margin-bottom: 20px;
+  border-radius: 18px;
+  object-fit: cover;
 }
 
 .map-place-sheet__close {
