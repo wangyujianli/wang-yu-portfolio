@@ -1,12 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 
-export function shouldOpenIntro(hasSeenIntro: boolean, targetName: string | symbol | null | undefined): boolean {
-  void hasSeenIntro
-  void targetName
-  return false
-}
-
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
   scrollBehavior: (to) => {

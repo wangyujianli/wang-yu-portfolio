@@ -162,7 +162,7 @@ C:\Users\81421\Desktop\青甘\reference-assetsall-images\青甘大环线_全部�
 所有个人状态只存在当前浏览器的 `localStorage`：
 
 - `westward:v1:visited`：各地点“已去过 / 未去”。
-- `westward:v1:intro-seen`：序章是否已经看过。
+- `westward:v1:intro-seen`：序章首次展示时立即保存；同一浏览器后续访问不再自动出现。
 - `westward:v1:selected-route`：地图上次选择的参考路线。
 - 天气模块不写入 localStorage，也不会读取旧天气缓存。
 
